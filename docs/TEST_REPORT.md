@@ -1,6 +1,19 @@
 # Test report
 
-> **Latest (backend v3, 14 Nov 2026):** 56 backend · 4 frontend unit · 12 E2E · 13 launcher checks, all passing. Details, the B01–B24 matrix and fixed defects: [BACKEND_RELEASE_REPORT.md](BACKEND_RELEASE_REPORT.md). The sections below are the earlier v1/v2 record.
+## Latest premium release — 15 November 2026
+
+- Production build and TypeScript: passed.
+- Backend regression suite: **61 passed**, one existing Starlette/httpx deprecation warning.
+- Full browser suite: **22 passed (2.4 minutes)** on installed Chrome against a fresh isolated QA backend, including real restart persistence and network-isolated evidence/export workflows.
+- Strict source hashes/counts: verified for both pinned NASA datasets.
+- Component suite: **blocked, no tests executed**. Fork and thread workers timed out during initialization, including retries. Previous component passes are historical and are not claimed as current.
+- Manual 200% zoom across all pages and full assistive-technology review: incomplete. Desktop screenshots inspected.
+
+Evidence: [browser](test-logs/premium-three-browser.txt), [backend + TypeScript + component outcome](test-logs/premium-three-backend-components.txt), [sources](test-logs/premium-three-source-verification.txt). The standard E2E command initially hit cold Python imports; the passing run used the unchanged full suite with a temporary base-URL configuration and a fresh isolated backend. Assertions were not weakened.
+
+## Historical test records
+
+> **Historical (backend v3, 14 Nov 2026):** 56 backend · 4 frontend unit · 12 E2E · 13 launcher checks, all passing. Details, the B01–B24 matrix and fixed defects: [BACKEND_RELEASE_REPORT.md](BACKEND_RELEASE_REPORT.md). The sections below are the earlier v1/v2 record.
 
 **Run date:** 14 Nov 2026 · **Machine:** Windows 11 Home 10.0.26300 · Python 3.12.10 · Node 26.13.0 · Microsoft Edge (Playwright channel `msedge`) · Raw logs: [docs/test-logs/](test-logs/)
 

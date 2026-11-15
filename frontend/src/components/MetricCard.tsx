@@ -30,18 +30,18 @@ export function MetricCard({ ev }: { ev: HealthEvidence }) {
       <h3 className="metric-name" id={`mc-${m.marker}`}>{m.marker_name}</h3>
       <div className="metric-value-row">
         {m.value === null ? <span className="metric-value" style={{ fontSize: 20 }}>No value</span> : (
-          <><span className="metric-value">{fmt(m.value)}</span><span className="metric-unit">{m.unit}</span></>
+          <><span className="metric-value">{String(m.value)}</span><span className="metric-unit">{m.unit}</span></>
         )}
       </div>
       {m.value !== null && m.range_low !== null && m.range_high !== null
         ? <RangeTrack value={m.value} low={m.range_low} high={m.range_high} flagged={m.needs_review} /> : null}
       <span className="meta">Supplied range {rangeText(m.range_low, m.range_high, m.unit)}</span>
       <RangeStatusLine status={m.range_status} />
-      <p className="metric-delta">
+      <details className="metric-comparison"><summary>Preflight comparison</summary><p className="metric-delta">
         {c.delta === null
           ? c.baseline_available ? "No comparison available" : "Personal mean not computed (n < 2)"
           : <>vs preflight mean {fmt(c.baseline, 2)} (n = {c.n}): <span className="tabular">{signed(c.delta, 2)} {m.unit}</span>{c.percent_delta !== null ? ` (${signed(c.percent_delta, 1)}%)` : ""}</>}
-      </p>
+      </p></details>
       <div className="metric-foot">
         {ev.review ? <span className="badge badge-teal">{REVIEW_LABEL[ev.review.status]}</span> : <span className="meta">Not reviewed</span>}
         <button type="button" className="btn btn-ghost btn-sm" aria-label={`Inspect ${m.marker_name} evidence`}

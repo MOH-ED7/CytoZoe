@@ -1,15 +1,30 @@
-import {
-  CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis,
-} from "recharts";
+import { memo, useMemo, useState, type KeyboardEvent } from "react";
+import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Scatter, XAxis, YAxis } from "recharts";
 import type { HealthTrend, TrendPoint } from "../api/contracts";
 import { fmt, RANGE_TEXT, rangeText } from "../lib/format";
 
-const DATA = "#1F4E79";
-const REVIEW = "#9A4B08";
-const BASELINE = "#53697D";
-
 interface DotProps { cx?: number; cy?: number; payload?: TrendPoint }
-
+interface SampleProps extends DotProps { selected: string; points: TrendPoint[]; unit: string; onSelect: (visit: string) => void; onExplore: (visit: string | null) => void }
+function MeasurementDot({ cx, cy, payload: p, selected, points, unit, onSelect, onExplore }: SampleProps) {
+  if (cx === undefined || cy === undefined || !p || p.value === null) return <g />;
+  const color = p.needs_review ? "#FFB357" : "#00D9C0";
+  const active = p.visit === selected;
+  const key = (event: KeyboardEvent<SVGGElement>) => {
+    if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(p.visit); }
+    if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+      event.preventDefault();
+      const index = points.findIndex(point => point.visit === p.visit);
+      const next = event.key === "Home" ? 0 : event.key === "End" ? points.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + points.length) % points.length;
+      document.getElementById(`health-point-${points[next].visit}`)?.focus();
+    }
+  };
+  return <g id={`health-point-${p.visit}`} className="trend-sample" role="button" tabIndex={0} aria-pressed={active} aria-label={`${p.visit_label}: ${p.value} ${unit}, ${RANGE_TEXT[p.range_status]}`} aria-describedby="trend-point-details" data-visit-point={p.visit} data-value={p.value} onClick={() => onSelect(p.visit)} onKeyDown={key} onFocus={() => onExplore(p.visit)} onBlur={() => onExplore(null)} onMouseEnter={() => onExplore(p.visit)} onMouseLeave={() => onExplore(null)} style={{ cursor: "pointer" }}>
+    <circle cx={cx} cy={cy} r={19} fill="transparent" />
+    {active ? <circle cx={cx} cy={cy} r={14} fill="none" stroke={color} strokeWidth={1.5} /> : null}
+    <circle className="trend-point-focus" cx={cx} cy={cy} r={18} fill="none" stroke="#F4F7FB" strokeWidth={2} />
+    <circle cx={cx} cy={cy} r={active ? 7 : 6} fill={color} stroke="#0E1E32" strokeWidth={2} />
+  </g>;
+}
 /** Round axis bounds to a 1/2/5 × 10^k step so tick labels are readable values. */
 export function niceScale(lo: number, hi: number, target = 5): { domain: [number, number]; ticks: number[] } {
   const span = hi - lo || Math.abs(hi) || 1;
@@ -23,83 +38,40 @@ export function niceScale(lo: number, hi: number, target = 5): { domain: [number
   return { domain: [ticks[0], ticks[ticks.length - 1]], ticks };
 }
 
-/**
- * Chart 1 — actual sample visits (categorical, not equally spaced in time) × marker value.
- * Dots only: no interpolation or smoothed curve between sparse blood draws.
- */
+/** Seven independent samples on a categorical axis. No connecting line or interpolated values. */
 export function HealthVisitChart({ trend, selectedVisit, onSelect }: { trend: HealthTrend; selectedVisit: string; onSelect: (visit: string) => void }) {
+  const [explored, setExplored] = useState<string | null>(null);
   const pts = trend.points;
-  const nums = pts.flatMap((p) => [p.value, p.range_low, p.range_high]).concat(trend.baseline.value).filter((v): v is number => v !== null);
-  const lo = Math.min(...nums);
-  const hi = Math.max(...nums);
-  const { domain, ticks } = niceScale(lo, hi);
-  const data = pts.map((p) => ({ ...p, x: p.visit }));
-
-  const Dot = ({ cx, cy, payload }: DotProps) => {
-    if (cx === undefined || cy === undefined || !payload || payload.value === null) return <g />;
-    const selected = payload.visit === selectedVisit;
-    const flagged = payload.needs_review;
-    return (
-      <g style={{ cursor: "pointer" }} onClick={() => onSelect(payload.visit)}>
-        {selected ? <circle cx={cx} cy={cy} r={12} fill="#E6EEF6" stroke={DATA} strokeWidth={1.5} /> : null}
-        <circle cx={cx} cy={cy} r={flagged ? 7 : 6} fill={flagged ? "#FFFFFF" : DATA} stroke={flagged ? REVIEW : DATA} strokeWidth={flagged ? 3 : 1} />
-      </g>
-    );
-  };
-  const BoundTick = ({ cx, cy }: DotProps) => (cx === undefined || cy === undefined ? <g /> : <line x1={cx - 14} x2={cx + 14} y1={cy} y2={cy} stroke="#8396A8" strokeWidth={2} />);
-
-  return (
-    <div className="chart-box" role="img"
-      aria-label={`${trend.marker_name} for ${trend.participant_id} across ${pts.length} historical visits in ${trend.unit}. Full values are in the data table below the chart.`}>
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={data} margin={{ top: 16, right: 16, bottom: 28, left: 8 }} accessibilityLayer={false}>
-          <CartesianGrid stroke="#E6ECF1" vertical={false} />
-          {trend.bounds_consistent && trend.range_low !== null && trend.range_high !== null ? (
-            <ReferenceArea y1={trend.range_low} y2={trend.range_high} fill="#E3EFF1" fillOpacity={1} stroke="#9CC5CB" ifOverflow="extendDomain" />
-          ) : null}
-          <XAxis dataKey="x" type="category" tick={{ fill: "#53697D", fontSize: 13 }} tickLine={false} axisLine={{ stroke: "#DDE5EB" }}
-            label={{ value: "Visit (L = days before launch · R = days after return)", position: "insideBottom", offset: -18, fill: "#53697D", fontSize: 12 }} />
-          <YAxis domain={domain} ticks={ticks} interval={0} tick={{ fill: "#53697D", fontSize: 13 }} tickLine={false} axisLine={false} width={64}
-            tickFormatter={(v: number) => fmt(v, 2)}
-            label={{ value: `${trend.marker_name} (${trend.unit})`, angle: -90, position: "insideLeft", offset: 4, fill: "#53697D", fontSize: 12, style: { textAnchor: "middle" } }} />
-          {trend.baseline.value !== null ? (
-            <ReferenceLine y={trend.baseline.value} stroke={BASELINE} strokeDasharray="6 5" strokeWidth={1.8}
-              label={{ value: `Preflight mean (n = ${trend.baseline.n})`, position: "insideTopRight", fill: "#53697D", fontSize: 12 }} />
-          ) : null}
-          <ReferenceLine x="R+1" stroke="#9FB3C6" strokeDasharray="2 4" />
-          {!trend.bounds_consistent ? (
-            <>
-              <Scatter dataKey="range_low" shape={BoundTick} isAnimationActive={false} legendType="none" name="Supplied lower bound" />
-              <Scatter dataKey="range_high" shape={BoundTick} isAnimationActive={false} legendType="none" name="Supplied upper bound" />
-            </>
-          ) : null}
-          <Scatter dataKey="value" shape={Dot} isAnimationActive={false} name={trend.marker_name} />
-          <Tooltip cursor={{ fill: "rgba(31,78,121,0.06)" }} content={({ active, payload }) => {
-            const p = active && payload?.length ? (payload[0].payload as TrendPoint) : null;
-            if (!p) return null;
-            return (
-              <div className="chart-tooltip">
-                <strong>{p.visit_label}</strong>
-                {p.value === null ? "No value" : `${fmt(p.value)} ${trend.unit}`}
-                <div className="meta">{RANGE_TEXT[p.range_status]} · {rangeText(p.range_low, p.range_high, trend.unit)}</div>
-              </div>
-            );
-          }} />
-        </ComposedChart>
-      </ResponsiveContainer>
+  const point = pts.find(p => p.visit === (explored ?? selectedVisit)) ?? pts[0];
+  return <div className="trend-chart" role="group" aria-label={`${trend.marker_name} for ${trend.participant_id} across ${pts.length} historical visits in ${trend.unit}. Arrow keys explore points; Enter selects. Full values are in Source Data.`}>
+    <div id="trend-point-details" className="trend-point-readout" role="tooltip">
+      {point ? <><div><span className="trend-kicker">{explored ? "POINT DETAILS" : "SELECTED POINT"}</span><strong>{point.visit_label}</strong><span>{trend.marker_name}</span></div><div><strong className={point.needs_review ? "flagged" : ""}>{point.value === null ? "Not recorded" : String(point.value)} <small>{trend.unit}</small></strong><span>{RANGE_TEXT[point.range_status]}</span></div><div><span>Supplied range</span><strong>{rangeText(point.range_low, point.range_high, trend.unit)}</strong><span>Retrospective mean {trend.baseline.available ? `${fmt(trend.baseline.value)} (n = ${trend.baseline.n})` : `unavailable (n = ${trend.baseline.n})`}</span></div></> : <span>No recorded observations</span>}
     </div>
-  );
+    <TrendPlot trend={trend} selectedVisit={selectedVisit} onSelect={onSelect} onExplore={setExplored} />
+  </div>;
 }
-
 export function HealthChartLegend({ trend }: { trend: HealthTrend }) {
+  return <div className="trend-legend"><span><i className="sample" />Measured sample</span><span><i className="flag" />Outside supplied range</span><span><i className="mean" />Retrospective mean{trend.baseline.available ? ` · n = ${trend.baseline.n}` : " unavailable"}</span><span><i className="bounds" />{trend.bounds_consistent ? "Supplied laboratory range" : "Supplied bounds per visit (they differ)"}</span></div>;
+}
+
+const BoundTick = ({ cx, cy }: DotProps) => cx === undefined || cy === undefined ? <g /> : <line x1={cx - 11} x2={cx + 11} y1={cy} y2={cy} stroke="#A8BDD0" strokeWidth={2} />;
+
+const TrendPlot = memo(function TrendPlot({ trend, selectedVisit, onSelect, onExplore }: { trend: HealthTrend; selectedVisit: string; onSelect: (visit: string) => void; onExplore: (visit: string | null) => void }) {
+  const pts = trend.points;
+  const data = useMemo(() => pts.map(p => ({ ...p, x: p.visit })), [pts]);
+  const numbers = pts.flatMap(p => [p.value, p.range_low, p.range_high]).concat(trend.baseline.value).filter((v): v is number => v !== null);
+  const { domain, ticks } = niceScale(numbers.length ? Math.min(...numbers) : 0, numbers.length ? Math.max(...numbers) : 1);
   return (
-    <div className="chart-legend" aria-hidden="true">
-      <span className="legend-item"><span className="legend-swatch dot" />Measured sample</span>
-      <span className="legend-item"><span className="legend-swatch flag" />Outside supplied range</span>
-      <span className="legend-item"><span className="legend-swatch dashed" />Retrospective preflight mean</span>
-      {trend.bounds_consistent
-        ? <span className="legend-item"><span className="legend-swatch band" />Supplied range (same for every visit)</span>
-        : <span className="legend-item"><span className="legend-swatch" style={{ borderTop: "2px solid #8396A8" }} />Supplied bounds per visit (they differ between visits)</span>}
+    <div className="trend-plot">
+      <ResponsiveContainer width="100%" height="100%"><ComposedChart data={data} margin={{ top: 28, right: 20, bottom: 14, left: 0 }} accessibilityLayer={false}>
+        <CartesianGrid stroke="#263A4E" vertical={false} strokeDasharray="2 6" />
+        {trend.bounds_consistent && trend.range_low !== null && trend.range_high !== null ? <ReferenceArea y1={trend.range_low} y2={trend.range_high} fill="#00D9C0" fillOpacity={0.045} stroke="#42636E" strokeOpacity={0.65} /> : null}
+        <XAxis dataKey="x" type="category" interval={0} tick={{ fill: "#C6D5E3", fontSize: 13 }} tickMargin={14} tickLine={false} axisLine={{ stroke: "#31495C" }} padding={{ left: 20, right: 20 }} />
+        <YAxis domain={domain} ticks={ticks} interval={0} width={52} tick={{ fill: "#A8BDD0", fontSize: 13 }} tickMargin={10} tickLine={false} axisLine={false} tickFormatter={(v: number) => fmt(v, 2)} />
+        {trend.baseline.value !== null ? <ReferenceLine y={trend.baseline.value} stroke="#A8BDD0" strokeDasharray="5 6" strokeWidth={1.3} /> : null}
+        {!trend.bounds_consistent ? <><Scatter dataKey="range_low" shape={<BoundTick />} isAnimationActive={false} legendType="none" name="Supplied lower bound" /><Scatter dataKey="range_high" shape={<BoundTick />} isAnimationActive={false} legendType="none" name="Supplied upper bound" /></> : null}
+        <Scatter dataKey="value" shape={<MeasurementDot selected={selectedVisit} points={pts} unit={trend.unit} onSelect={onSelect} onExplore={onExplore} />} isAnimationActive={false} name={trend.marker_name} />
+      </ComposedChart></ResponsiveContainer>
     </div>
   );
-}
+});

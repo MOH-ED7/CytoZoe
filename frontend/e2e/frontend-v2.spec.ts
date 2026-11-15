@@ -11,10 +11,10 @@ test("F6 landing: local imagery, no API calls, credits, accessible, CTA opens th
   page.on("request", (r) => { if (new URL(r.url()).pathname.startsWith("/api/")) api.push(r.url()); });
   page.on("response", (r) => { if (new URL(r.url()).pathname.startsWith("/media/")) media.push({ url: r.url(), type: r.headers()["content-type"] ?? "", status: r.status() }); });
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Understand the change. Keep the evidence.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("CytoZoeSpace HealthIntelligence.");
   await expect(page.getByText("Independent research prototype").first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Photo & data credits" })).toBeVisible();
-  await expect(page.getByText(/Image courtesy of the Earth Science and Remote Sensing Unit, NASA Johnson Space Center/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Research & visual credits" })).toBeVisible();
+  await expect(page.getByText(/All cinematic visuals are AI-generated illustrations, not NASA photography or scientific evidence/)).toBeVisible();
   await expect(page.getByText(/Not affiliated with or endorsed by NASA/)).toBeVisible();
   await page.waitForLoadState("networkidle");
   expect(media.length).toBeGreaterThan(0);
@@ -28,8 +28,8 @@ test("F6 landing: local imagery, no API calls, credits, accessible, CTA opens th
   expect(axe.violations.map((v) => `${v.id}: ${v.nodes[0]?.target.join(" ")}`)).toEqual([]);
   expect(api, "the introduction must not call the API").toEqual([]);
 
-  await page.getByRole("link", { name: "Explore the system" }).click();
-  await expect(page).toHaveURL(/#how$/);
+  await page.getByRole("link", { name: "Explore the Science" }).click();
+  await expect(page).toHaveURL(/#science$/);
   await page.getByRole("link", { name: "Launch Workspace" }).first().click();
   await expect(page.getByRole("heading", { name: "Health Overview", level: 1 })).toBeVisible();
   expect(external).toEqual([]);
@@ -82,6 +82,7 @@ test("F2 brief follow-up opens the shared evidence drawer on the note field", as
 test("F3 Health Trends separates the retrospective and the replay (prior-visits-only) baselines", async ({ page }) => {
   await isolate(page);
   await page.goto("/health?participant=C001&sample=L-3&marker=creatinine");
+  await page.getByText("Baseline & Methodology", { exact: true }).click();
   const card = page.getByRole("region", { name: /Baseline comparison/ });
   const retro = card.locator(".baseline-tile").first();
   const prior = card.locator(".baseline-tile.replay");
@@ -92,6 +93,7 @@ test("F3 Health Trends separates the retrospective and the replay (prior-visits-
   await expect(card).toContainText("retrospective mean includes the visit's own value");
   // First visit: nothing is known before it, so nothing is shown.
   await page.goto("/health?participant=C001&sample=L-92&marker=creatinine");
+  await page.getByText("Baseline & Methodology", { exact: true }).click();
   await expect(prior).toContainText("Not available");
   await expect(prior).toContainText("no earlier preflight visit");
 });

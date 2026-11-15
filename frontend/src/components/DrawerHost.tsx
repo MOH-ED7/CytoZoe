@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api, ApiError } from "../api/client";
 import type { EnvEvidence, HealthEvidence } from "../api/contracts";
 import { useDrawer, useServiceStatus } from "../app/providers";
-import { localDateTime, REVIEW_LABEL } from "../lib/format";
+import { fmt, signed, localDateTime, REVIEW_LABEL } from "../lib/format";
 import { useAsync } from "../lib/useAsync";
 import { Assistant } from "./Assistant";
 import { Drawer } from "./Drawer";
@@ -35,7 +35,7 @@ function EvidenceDrawer({ id, focusReview, onClose }: { id: string; focusReview:
         <>
           {ev.case === "health" ? (
             <>
-              <HealthEvidencePanel ev={ev as HealthEvidence} followUp={form} />
+              <HealthEvidencePanel ev={ev as HealthEvidence} followUp={form} calculationDetail={<PriorVisitComparison ev={ev as HealthEvidence} />} />
               <button type="button" className="btn btn-ghost" onClick={() => {
                 const h = ev as HealthEvidence;
                 onClose();
@@ -186,4 +186,16 @@ function ReviewDrawer({ id, onClose }: { id: string; onClose: () => void }) {
       ) : null}
     </Drawer>
   );
+}
+
+/** Reads the existing prospective replay calculation; no baseline math in the interface. */
+function PriorVisitComparison({ ev }: { ev: HealthEvidence }) {
+  const { dataVersion } = useDrawer();
+  const replay = useAsync(() => api.healthReplay(ev.context.participant_id), [ev.context.participant_id, dataVersion]);
+  const frame = replay.data?.frames.find(f => f.visit === ev.context.visit);
+  const card = frame?.cards.find(c => c.marker === ev.measurement.marker);
+  return <div className="prior-visit-detail"><h4>Known before this visit (replay)</h4>
+    {replay.error ? <ErrorState error={replay.error} onRetry={replay.reload} /> : null}
+    {card ? <><p className="small">{card.baseline_so_far === null ? `Not available — requires at least 2 earlier preflight values (n = ${card.n_so_far}).` : `${fmt(card.baseline_so_far)} ${card.unit} (n = ${card.n_so_far})`}</p><p className="small muted">Earlier preflight visits: {frame?.baseline_visits?.join(", ") || "none"}. Current and future samples are excluded.</p><p className="small muted">Difference: {card.delta === null ? "not available" : `${signed(card.delta)} ${card.unit}`}.</p></> : replay.loading ? <p className="small muted">Loading prior-visit calculation…</p> : null}
+  </div>;
 }

@@ -2,15 +2,15 @@ import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Too
 import type { EnvironmentView, EnvPoint } from "../api/contracts";
 import { clock, fmt, timeOnly } from "../lib/format";
 
-const DATA = "#1F4E79";
-const ERROR = "#B42318";
+const DATA = "#00d9c0";
+const ERROR = "#ffb357";
 const TICKS = Array.from({ length: 9 }, (_, i) => i * 10800);
 
 function axisProps() {
   return {
     type: "number" as const, dataKey: "t", domain: [0, 86400] as [number, number], ticks: TICKS,
-    tickFormatter: (v: number) => clock(v), tick: { fill: "#53697D", fontSize: 12 }, tickLine: false,
-    axisLine: { stroke: "#DDE5EB" }, allowDuplicatedCategory: false,
+    tickFormatter: (v: number) => clock(v), tick: { fill: "#a8bdd0", fontSize: 12 }, tickLine: false,
+    axisLine: { stroke: "#283d52" }, allowDuplicatedCategory: false,
   };
 }
 
@@ -20,7 +20,7 @@ function Tip({ active, payload, kind }: { active?: boolean; payload?: { payload:
   return (
     <div className="chart-tooltip">
       <strong>{timeOnly(p.ts)} <span className="meta">source clock</span></strong>
-      {kind === "rate" ? `${fmt(p.rate, 3)} µGy/hour` : `${fmt(p.cumulative, 3)} µGy accumulated`}
+      {kind === "rate" ? `${String(p.rate)} µGy/hour` : `${fmt(p.cumulative, 3)} µGy accumulated`}
       <div className="meta">Data row {p.source_row}</div>
     </div>
   );
@@ -33,12 +33,12 @@ export function RadiationRateChart({ env, logScale }: { env: EnvironmentView; lo
       aria-label={`DosTel1 absorbed dose rate in µGy per hour across 1 March 2022, drawn as ${env.segments.length} separate segments broken at ${env.quality.conflict_groups.length} excluded conflict timestamps. Values are in the data table below.`}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart margin={{ top: 12, right: 16, bottom: 28, left: 8 }} accessibilityLayer={false}>
-          <CartesianGrid stroke="#E6ECF1" vertical={false} />
-          <XAxis {...axisProps()} label={{ value: "Source timestamp, 1 March 2022 (as exported; no timezone)", position: "insideBottom", offset: -18, fill: "#53697D", fontSize: 12 }} />
+          <CartesianGrid stroke="#23364a" vertical={false} />
+          <XAxis {...axisProps()} label={{ value: "Source clock (no timezone)", position: "insideBottom", offset: -18, fill: "#a8bdd0", fontSize: 12 }} />
           <YAxis scale={logScale ? "log" : "linear"} domain={logScale ? [1, 1000] : [0, "auto"]} allowDataOverflow={logScale}
             ticks={logScale ? [1, 3, 10, 30, 100, 300, 1000] : undefined}
-            tick={{ fill: "#53697D", fontSize: 12 }} tickLine={false} axisLine={false} width={64} tickFormatter={(v: number) => fmt(v, 1)}
-            label={{ value: "Absorbed dose rate (µGy/hour)", angle: -90, position: "insideLeft", offset: 4, fill: "#53697D", fontSize: 12, style: { textAnchor: "middle" } }} />
+            tick={{ fill: "#a8bdd0", fontSize: 12 }} tickLine={false} axisLine={false} width={64} tickFormatter={(v: number) => fmt(v, 1)}
+            label={{ value: "Absorbed dose rate (µGy/hour)", angle: -90, position: "insideLeft", offset: 4, fill: "#a8bdd0", fontSize: 12, style: { textAnchor: "middle" } }} />
           {env.quality.conflict_groups.map((g) => (
             <ReferenceLine key={g.timestamp} x={g.t} stroke={ERROR} strokeDasharray="3 3" strokeWidth={1.4} />
           ))}
@@ -60,11 +60,11 @@ export function SensorDoseChart({ env }: { env: EnvironmentView }) {
       aria-label={`Estimated accumulated sensor dose in µGy over covered intervals, reaching ${fmt(env.integration.estimated_sensor_dose_uGy, 2)} µGy. The line is interrupted wherever intervals were excluded.`}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart margin={{ top: 12, right: 16, bottom: 28, left: 8 }} accessibilityLayer={false}>
-          <CartesianGrid stroke="#E6ECF1" vertical={false} />
-          <XAxis {...axisProps()} label={{ value: "Source timestamp, 1 March 2022", position: "insideBottom", offset: -18, fill: "#53697D", fontSize: 12 }} />
-          <YAxis domain={[0, "auto"]} tick={{ fill: "#53697D", fontSize: 12 }} tickLine={false} axisLine={false} width={64}
+          <CartesianGrid stroke="#23364a" vertical={false} />
+          <XAxis {...axisProps()} label={{ value: "Source clock · 1 Mar 2022", position: "insideBottom", offset: -18, fill: "#a8bdd0", fontSize: 12 }} />
+          <YAxis domain={[0, "auto"]} tick={{ fill: "#a8bdd0", fontSize: 12 }} tickLine={false} axisLine={false} width={64}
             tickFormatter={(v: number) => fmt(v, 0)}
-            label={{ value: "Estimated sensor dose (µGy)", angle: -90, position: "insideLeft", offset: 4, fill: "#53697D", fontSize: 12, style: { textAnchor: "middle" } }} />
+            label={{ value: "Estimated sensor dose (µGy)", angle: -90, position: "insideLeft", offset: 4, fill: "#a8bdd0", fontSize: 12, style: { textAnchor: "middle" } }} />
           {env.quality.conflict_groups.map((g) => (
             <ReferenceLine key={g.timestamp} x={g.t} stroke={ERROR} strokeDasharray="3 3" strokeWidth={1.4} />
           ))}

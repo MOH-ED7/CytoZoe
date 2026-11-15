@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { ReviewStatus } from "../api/contracts";
 import { useDrawer } from "../app/providers";
@@ -55,16 +55,16 @@ export default function Reviews() {
   const total = healthCount + envCount;
 
   return (
-    <>
-      <PageHeader eyebrow="04 · Review Log" title="Review Log"
-        purpose="What did we decide to follow up? Every saved review with its status and history, and a local evidence packet you can download." />
+    <div className="premium-workspace reviews-premium">
+      <PageHeader eyebrow="04 / REVIEW LOG" title="Review Log & Export"
+        purpose="Review saved findings, inspect evidence history, and export traceable research records." />
 
-      <div className="split">
+      <div className="split review-workbench">
         <section className="card" aria-labelledby="log-title">
           <div className="card-head">
             <div>
               <h2 id="log-title">Saved reviews</h2>
-              <p>Stored in the local database on this computer. Select a row to open its note and history.</p>
+              <p>Local records · select a finding to inspect evidence, edit its note, and view audit history.</p>
             </div>
           </div>
           <div className="filters" role="group" aria-label="Filter reviews" style={{ marginBottom: 16 }}>
@@ -97,6 +97,7 @@ export default function Reviews() {
           {list.data && list.data.items.length === 0 ? (
             <Empty>{caseF || statusF || participantF ? "No reviews match these filters." : "No reviews saved yet. Inspect a result on Health Overview or Radiation Review and record a follow-up."}</Empty>
           ) : null}
+          {list.data && list.data.items.length === 0 && !caseF && !statusF ? <Link className="btn btn-secondary" to="/overview">Inspect a historical result</Link> : null}
           {list.data && list.data.items.length > 0 ? (
             <div className="table-wrap" aria-busy={list.loading}>
               <table className="data">
@@ -105,12 +106,12 @@ export default function Reviews() {
                 <tbody>
                   {list.data.items.map((r) => (
                     <tr key={r.id} className="row-click" onClick={() => open({ kind: "review", id: r.id })}>
-                      <td><button type="button" className="btn btn-ghost btn-sm" style={{ paddingLeft: 0 }}
+                      <td data-label="Finding"><button type="button" className="btn btn-ghost btn-sm" style={{ paddingLeft: 0 }}
                         onClick={(e) => { e.stopPropagation(); open({ kind: "review", id: r.id }); }}>{r.title}</button>{r.note ? <p className="small muted" style={{ maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.note}>{r.note}</p> : null}</td>
-                      <td>{r.case === "health" ? "Health" : "Environment"}</td>
-                      <td>{r.participant_id ?? `${r.instrument_id} (no participant)`}</td>
-                      <td><span className={`badge ${r.status === "REVIEWED" ? "badge-success" : r.status === "FOLLOW_UP_REQUESTED" ? "badge-review" : "badge-history"}`}>{REVIEW_LABEL[r.status]}</span></td>
-                      <td>{localDateTime(r.updated_at)}</td>
+                      <td data-label="Case">{r.case === "health" ? "Health" : "Environment"}</td>
+                      <td data-label="Participant / instrument">{r.participant_id ?? `${r.instrument_id} (no participant)`}</td>
+                      <td data-label="Status"><span className={`badge ${r.status === "REVIEWED" ? "badge-success" : r.status === "FOLLOW_UP_REQUESTED" ? "badge-review" : "badge-history"}`}>{REVIEW_LABEL[r.status]}</span></td>
+                      <td data-label="Updated">{localDateTime(r.updated_at)}<span className="review-version">Version {r.version}</span></td>
                     </tr>
                   ))}
                 </tbody>
@@ -128,12 +129,14 @@ export default function Reviews() {
           {!preview.data && preview.loading ? <Skeleton height={160} label="Preparing preview…" /> : null}
           {preview.data ? (
             <>
+              <p className="export-count"><strong>{total}</strong> saved research record{total === 1 ? "" : "s"}</p>
               <ul className="export-list">
                 <li><strong>Health section:</strong> {healthCount} review{healthCount === 1 ? "" : "s"} with frozen evidence, notes and history</li>
                 <li><strong>Environment section (separate):</strong> {envCount} review{envCount === 1 ? "" : "s"}</li>
+              </ul><details className="disclosure export-contents"><summary>Sources &amp; provenance</summary><ul className="export-list">
                 <li><strong>Sources:</strong> {preview.data.datasets.map((d) => `${d.id} (SHA-256 ${d.sha256.slice(0, 10)}…)`).join("; ")}</li>
                 <li><strong>Provenance:</strong> app {preview.data.app.version}, build {preview.data.app.git_version}, rule versions, limitations</li>
-              </ul>
+              </ul></details>
               {total === 0 ? <p className="small muted">No reviews yet — the packet would contain sources and limitations only.</p> : null}
               <div className="btn-row">
                 <button type="button" className="btn btn-primary" disabled={exporting} onClick={() => download("html")}><IconDownload />Download HTML</button>
@@ -145,6 +148,6 @@ export default function Reviews() {
           ) : null}
         </section>
       </div>
-    </>
+    </div>
   );
 }

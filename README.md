@@ -31,11 +31,12 @@ CytoZoe closes that review-workflow gap in one complete loop: **inspect → expl
 
 ## What's inside
 
-- **4 pages:**
+- **5 pages:**
+  - Landing / introduction
   - Health Overview
   - Health Trends
   - Radiation Review
-  - Review Log
+  - Review Log & Export
 - **3 charts:**
   - blood marker by visit
   - sensor dose rate
@@ -62,7 +63,7 @@ Stack: React 19 + TypeScript + Vite + Recharts · FastAPI + Pydantic + pandas ·
 
 ## Quick start
 
-Requirements: Python 3.11+ and Node.js 20+. Network access is needed **only once**, for dependencies and the one-time NASA data download.
+Requirements: Python 3.11+ and Node.js 22.12+ (or another version supported by the pinned Vite release). Network access is needed **only once**, for dependencies and the one-time NASA data download.
 
 ### Easiest (any OS, from the project folder)
 ```sh
@@ -100,10 +101,11 @@ Once data is imported, **the raw CSVs are no longer needed**: the app reads only
 
 ### Tests
 ```sh
-cd backend && python -m pytest -q                 # 56 tests: engines, provenance, brief, replays, API, backup, on the real pinned NASA snapshots
-node tests/launcher/launcher.test.mjs             # 13 launcher checks: start, readiness, clean stop, no orphans, port safety
-cd frontend && npm run typecheck && npm test      # strict TypeScript + component tests
-cd frontend && npx playwright test                # 12 E2E specs (uses installed Edge/Chrome; set PW_CHANNEL)
+# Run from the repository root after setup:
+npm test                       # backend regression tests, TypeScript, then component tests
+node tests/launcher/launcher.test.mjs
+npm run e2e                    # full browser suite; installed Chrome/Edge required
+# Set PW_CHANNEL=msedge on Windows if needed.
 ```
 The real-data backend and E2E tests need `data/raw/` staged (`python scripts/fetch_data.py --all`). Without it they are **skipped, not faked**. See [docs/TEST_REPORT.md](docs/TEST_REPORT.md) for the latest run.
 
@@ -219,7 +221,7 @@ Full provenance: [data/manifests/sources.json](data/manifests/sources.json) · [
 
 ## Credits
 
-Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR RadLab (DosTel1). The code was written with the help of an AI coding assistant (Claude Code). The delivered app itself uses no AI model at runtime. Check the 2026 Space Apps AI-disclosure rules before submitting.
+Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR RadLab (DosTel1). Development used AI coding assistants including Claude Code and OpenAI Codex. The premium landing illustrations are AI-generated artwork, not NASA photography or source evidence. The delivered app itself uses no AI model at runtime. Check the 2026 Space Apps AI-disclosure rules before submitting.
 
 Code licence: see [LICENSE](LICENSE). NASA data remain subject to their providers' terms.
 
@@ -227,3 +229,11 @@ Code licence: see [LICENSE](LICENSE). NASA data remain subject to their provider
 ## Final integration pass — 15 November 2026
 
 See [final implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) for current verification, changes and remaining release gates. Earlier test results above are historical.
+
+## Premium interface release — 15 November 2026
+
+All five pages now share the finished navy/teal workspace design. Health Trends uses independent historical points, per-visit bounds where needed, and an on-demand evidence drawer. Overview, radiation replay/conflict inspection, review editing/audit history and HTML/JSON exports retain the existing backend contracts and scientific calculations.
+
+Latest verification: **61 backend tests and 22 browser tests passed**, production build and TypeScript passed, both pinned NASA source hashes verified. **The four component tests did not execute: Vitest worker initialization timed out.** This remains a verification limitation, not a passing component result. Full manual 200% zoom/assistive-technology verification is also incomplete. See the existing [implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) and [test report](docs/TEST_REPORT.md).
+
+One-time installation remains `npm run setup`, followed by `npm start` for the offline demo at http://127.0.0.1:8000. The developer QA preview at :8030 is an isolated test database, not the default production startup. Install dependencies independently in a fresh clone; local `.venv` and `node_modules` links are not distributed.

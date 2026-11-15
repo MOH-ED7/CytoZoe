@@ -1,5 +1,21 @@
 # Final integrated implementation — 15 November 2026
 
+## Current premium release — supersedes earlier verification below
+
+Official submission repository: `MOH-ED7/CytoZoe`, branch `main`. All five pages are complete: cinematic Landing, Health Overview, categorical-point Health Trends, Radiation Review, and Review Log & Export. The approved Landing and Trends were preserved during the three-page pass; before/after screenshots were pixel-identical, and their source files remained byte-identical. Backend engines, API contracts, source hashes, database schema and review concurrency calculations were unchanged.
+
+The interface reuses existing selectors, evidence/review drawers, source-row inspection, Recharts, replay controls, audit timeline and export endpoints. Long secondary explanations are disclosed on demand. Stale Overview responses are guarded by participant/visit identity, while its timeline replay remains mounted during loading. Optimized landing artwork is bundled locally with truthful AI-illustration credits.
+
+**Latest actual results:** production build and TypeScript passed; **61 backend tests passed** (one existing Starlette/httpx deprecation warning); **22 installed-Chrome browser tests passed**, including all 140 Overview values, all 140 Trends observations, all 28 Mission Brief samples, replay/pause/resume, conflict quarantine, evidence, review editing, audit history, HTTP 409 draft preservation, cross-tab sync, parsed HTML/JSON exports, network isolation and a real server stop/restart. Strict source verification confirms both registered SHA-256 hashes, 1,202 raw radiation rows / 1,194 accepted / 8 quarantined / 4 conflict groups; integration remains 296.04 µGy at 99.04% coverage.
+
+**Unresolved:** Vitest fork and thread workers timed out during initialization; the four component tests did not execute in the latest run. No assertion was weakened. Full manual 200% zoom and assistive-technology verification remain incomplete; only Overview's native 200% zoom was confirmed. No unconditional all-tests-pass or full manual-accessibility sign-off is claimed. The final browser suite used a fresh isolated local backend on :8040 after cold Python dependency reads delayed the default test-server startup. A temporary Python bytecode-cache path resolved that startup issue without modifying application code.
+
+Final desktop screenshots: [Landing](screenshots/orbital-landing-1440.png), [Overview](screenshots/overview-1440.png), [Trends](screenshots/health-1440.png), [Radiation](screenshots/environment-1440.png), [Reviews](screenshots/reviews-1440.png). Review records visible in screenshots are isolated QA records created through real application workflows.
+
+Final evidence: [browser tests](test-logs/premium-three-browser.txt), [backend/TypeScript/component outcome](test-logs/premium-three-backend-components.txt), [source verification](test-logs/premium-three-source-verification.txt). Earlier sections below are historical implementation records; their test counts and screenshot versions do not supersede this release summary.
+
+## Historical integration record
+
 ## Release decision
 
 **NO-GO for an unconditional PRD v4 sign-off until the physical Wi-Fi-off rehearsal, manual 200% zoom/VoiceOver review, and logged-out public-link check are completed.** Automated competition-prototype verification is recorded below. No submission or video recording is claimed.

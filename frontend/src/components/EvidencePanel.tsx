@@ -52,7 +52,7 @@ function SourceStep({ ev, children }: { ev: Evidence; children?: ReactNode }) {
   );
 }
 
-export function HealthEvidencePanel({ ev, followUp }: { ev: HealthEvidence; followUp?: ReactNode }) {
+export function HealthEvidencePanel({ ev, followUp, calculationDetail }: { ev: HealthEvidence; followUp?: ReactNode; calculationDetail?: ReactNode }) {
   const m = ev.measurement;
   const c = ev.comparison;
   const ctx = ev.context;
@@ -73,6 +73,7 @@ export function HealthEvidencePanel({ ev, followUp }: { ev: HealthEvidence; foll
           <dt>Difference from mean</dt>
           <dd>{c.delta === null ? "—" : `${signed(c.delta)} ${m.unit}${c.percent_delta === null ? "" : ` (${signed(c.percent_delta, 2)}%)`}`}</dd>
         </dl>
+        {calculationDetail}
         {c.includes_selected_sample ? (
           <p className="small muted" style={{ marginTop: 6 }}>This preflight sample is one of the values in the mean, so the comparison is retrospective — not a real-time prediction.</p>
         ) : null}

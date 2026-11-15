@@ -28,21 +28,21 @@ export default function Overview() {
   const pid = resolved?.participant.participant_id;
   const visit = resolved?.sample.visit;
   const overview = useAsync(() => api.health(pid!, visit!), [pid, visit, dataVersion], Boolean(pid && visit));
-  const data = overview.data;
+  const data = overview.data?.participant_id === pid && overview.data?.visit === visit ? overview.data : null;
   const onVisit = useCallback((v: string) => update({ sample: v }, { replace: true }), [update]);
   const flagged = data ? data.cards.filter((c) => c.measurement.needs_review) : [];
 
   return (
-    <>
-      <PageHeader eyebrow="01 · Health Overview" title="Health Overview" study="health"
-        purpose="Historical NASA research data · OSD-575 · not live. Inspect a measurement, verify its evidence, and record a follow-up." />
+    <div className="premium-workspace overview-premium">
+      <PageHeader eyebrow="01 / HEALTH OVERVIEW" title="Health Overview" study="health"
+        purpose="Explore historical crew biomarkers, supplied reference ranges, and findings requiring review." />
 
       {participants.error ? <ErrorState error={participants.error} onRetry={participants.reload} /> : null}
       {resolved && participants.data ? (
         <div className="toolbar" role="group" aria-label="Sample selection">
           <ParticipantSelect participants={participants.data} value={resolved.participant.participant_id} onChange={(v) => update({ participant: v })} />
           <SampleSelect samples={resolved.participant.samples} value={resolved.sample.visit} onChange={(v) => update({ sample: v })} />
-          <p className="toolbar-note">Historical research sample · not a live reading. L = days before launch, R = days after return.</p>
+          <p className="toolbar-note">OSD-575 · historical research samples</p>
           <div className="context-chips">
             <span className={`badge ${resolved.sample.phase === "PREFLIGHT" ? "badge-history" : "badge-replay"}`}>{resolved.sample.phase === "PREFLIGHT" ? "Preflight sample" : "Postflight sample"}</span>
           </div>
@@ -67,8 +67,8 @@ export default function Overview() {
               <section className="card" aria-labelledby="review-title">
                 <div className="card-head">
                   <div>
-                    <p className="card-kicker">Action list</p>
-                    <h2 id="review-title">Results to review</h2>
+                    <p className="card-kicker">Source-range observations</p>
+                    <h2 id="review-title">Results Requiring Review</h2>
                     <p>{data.participant_id} · {data.visit_label} · values outside the range supplied in the source file</p>
                   </div>
                   <span className={`badge ${flagged.length ? "badge-review" : "badge-history"}`}>
@@ -82,13 +82,13 @@ export default function Overview() {
                     <div style={{ minWidth: 0 }}>
                       <div className="finding-title">{ev.measurement.marker_name} · <span className="status-review">Needs review</span></div>
                       <p className="finding-body">{findingSentence(ev)}</p>
-                      <p className="small muted" style={{ marginTop: 4 }}>
+                      <details className="finding-context"><summary>Comparison &amp; interpretation</summary><p className="small muted" style={{ marginTop: 4 }}>
                         {ev.comparison.baseline_available
                           ? `Compared with ${ev.context.participant_id}'s retrospective preflight mean of ${fmt(ev.comparison.baseline)} ${ev.measurement.unit} (n = ${ev.comparison.n}).`
                           : "No personal baseline (fewer than two preflight values)."}
                         {ev.context.phase === "PREFLIGHT" ? " Collected before launch — not a spaceflight effect." : " Descriptive only; no cause is inferred."}
                         {" "}Not a diagnosis.
-                      </p>
+                      </p></details>
                       {ev.review ? <p style={{ marginTop: 6 }}><span className="badge badge-teal">{REVIEW_LABEL[ev.review.status]}</span></p> : null}
                     </div>
                     <div className="btn-row">
@@ -102,9 +102,6 @@ export default function Overview() {
               </section>
 
               {resolved ? <nav className="visit-strip" aria-label="Historical visits">{resolved.participant.samples.map((sample) => <button key={sample.visit} type="button" className={`btn btn-sm ${sample.visit === visit ? "btn-primary" : "btn-secondary"}`} aria-current={sample.visit === visit ? "step" : undefined} onClick={() => update({ sample: sample.visit })}>{sample.visit}</button>)}</nav> : null}
-              <details className="disclosure"><summary>Historical timeline replay</summary>
-                {pid && visit ? <HealthReplayPanel participant={pid} visit={visit} onVisit={onVisit} /> : null}
-              </details>
 
               <details className="disclosure"><summary>Data &amp; saved review counts</summary><section className="card" aria-labelledby="data-title">
                 <div className="card-head" style={{ marginBottom: 12 }}>
@@ -134,6 +131,9 @@ export default function Overview() {
           </div>
         </>
       ) : null}
-    </>
+      {pid && visit ? <details className="disclosure"><summary>Historical timeline replay</summary>
+        <HealthReplayPanel participant={pid} visit={visit} onVisit={onVisit} />
+      </details> : null}
+    </div>
   );
 }

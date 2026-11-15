@@ -1,0 +1,15 @@
+/* Shared Orbital Intelligence tokens: landing and Health Trends. */
+.landing, .shell:has(.health-trends) {
+--l-bg:#07121f;
+--l-surface:#0e1e32;
+--l-elevated:#162b43;
+--l-teal:#00d9c0;
+--l-blue:#4a78ff;
+--l-amber:#ffb357;
+--l-white:#f4f7fb;
+--l-muted:#a8bdd0;
+--l-line:rgb(168 189 208 / 18%);
+--l-radius:5px;
+--l-duration:220ms;
+--l-space:clamp(80px,9vw,144px);
+}

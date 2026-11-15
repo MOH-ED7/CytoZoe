@@ -90,14 +90,14 @@ test("Health Trends: categorical visits, URL state, inline follow-up keeps the m
   await isolate(page);
   await page.goto("/health?participant=C001&sample=R%2B1&marker=glucose");
   await expect(page.getByRole("tab", { name: "Glucose" })).toHaveAttribute("aria-selected", "true");
-  const panel = page.getByRole("region", { name: "Evidence" });
+  const panel = page.getByRole("region", { name: "Selected observation" });
   await expect(panel).toContainText("90");
   await expect(panel).toContainText("77.3333 mg/dL (n = 3)");
   await expect(panel).toContainText("+12.6667 mg/dL (+16.38%)");
   await expect(panel).toContainText("Within supplied range");
 
-  await page.getByText(/Data table · 7 source values/).click();
-  const rows = page.locator("table.data tbody tr button");
+  await page.getByText("Source Data", { exact: true }).click();
+  const rows = page.locator("table.data tbody tr td:first-child button");
   await expect(rows).toHaveText(["L-92 · Preflight", "L-44 · Preflight", "L-3 · Preflight", "R+1 · Postflight", "R+45 · Postflight", "R+82 · Postflight", "R+194 · Postflight"]);
   await page.getByRole("button", { name: "Select visit R+45 · Postflight" }).click();
   await expect(page).toHaveURL(/sample=R%2B45/);
@@ -109,8 +109,8 @@ test("Health Trends: categorical visits, URL state, inline follow-up keeps the m
   await expect(page).toHaveURL(/marker=glucose/);
 
   await page.getByRole("button", { name: "Record follow-up" }).click();
-  await expect(panel.getByLabel(/Reviewer note/)).toBeFocused();
-  await expect(panel.locator(".ev-big")).toBeVisible();
+  await expect(page.getByRole("dialog").getByLabel(/Reviewer note/)).toBeFocused();
+  await expect(panel.locator(".trend-observation-value")).toBeVisible();
 
   // Invalid params fall back visibly to a valid selection.
   await page.goto("/health?participant=C999&sample=X&marker=bogus");

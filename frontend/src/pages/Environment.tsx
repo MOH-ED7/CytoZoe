@@ -22,14 +22,14 @@ export default function Environment() {
   const inspector = useRef<HTMLElement>(null);
 
   return (
-    <>
-      <PageHeader eyebrow="03 · Radiation Review" title="Radiation Review" study="environment"
-        purpose="What does this separate environment record show? One day of ISS sensor readings, with every data-quality decision visible and inspectable." />
+    <div className="premium-workspace radiation-premium">
+      <PageHeader eyebrow="03 / RADIATION REVIEW" title="Radiation Review" study="environment"
+        purpose="Explore historical space-station radiation measurements, recorded events, and source data quality." />
       <div className="case-banner" role="note">
         <IconSatellite />
         <span>Separate case study</span><span className="sep">·</span><span>ISS Columbus</span><span className="sep">·</span>
         <span>DosTel1</span><span className="sep">·</span><span>1 March 2022</span><span className="sep">·</span>
-        <span>Not linked to the selected health participant.</span>
+        <span>Historical DosTel1 environmental sensor data — not live or personal astronaut exposure. Not linked to the selected health participant.</span>
       </div>
 
       {error ? <ErrorState error={error} onRetry={reload} /> : null}
@@ -39,8 +39,9 @@ export default function Environment() {
         <>
           <section className="card quality-strip" aria-label="Data quality summary">
             <div className="q-item"><span className="q-label">Raw records</span><span className="q-value">{env.quality.raw_rows.toLocaleString()}</span></div>
+            <div className="q-item"><span className="q-label">Accepted records</span><span className="q-value">{env.quality.accepted_rows.toLocaleString()}</span></div>
             <div className="q-item"><span className="q-label">Excluded records</span><span className="q-value">{env.quality.excluded_rows} <small>in {env.quality.conflict_groups.length} conflict groups</small></span></div>
-            <div className="q-item"><span className="q-label">Covered duration</span><span className="q-value">{durationShort(env.integration.covered_seconds)}</span></div>
+            <div className="q-item"><span className="q-label">Integrated sensor dose</span><span className="q-value">{fmt(env.integration.estimated_sensor_dose_uGy, 2)} <small>µGy</small></span></div>
             <div className="q-item"><span className="q-label">Coverage of recorded span</span><span className="q-value">{fmt((env.integration.coverage_ratio ?? 0) * 100, 2)}% <small>of {durationShort(env.integration.span_seconds)}</small></span></div>
             <div className="q-action">
               <button type="button" className="btn btn-secondary" onClick={() => {
@@ -50,13 +51,11 @@ export default function Environment() {
             </div>
           </section>
 
-          <LiveRadiation spanSeconds={env.integration.span_seconds} finalDose={env.integration.estimated_sensor_dose_uGy} />
-
           <section className="card" aria-labelledby="rate-title">
             <div className="card-head">
               <div>
                 <h2 id="rate-title">Absorbed dose rate at the sensor</h2>
-                <p>Chart 2 · {env.quality.accepted_rows.toLocaleString()} accepted readings in µGy/hour · lines break at excluded timestamps</p>
+                <p>Accepted source measurements · {env.quality.accepted_rows.toLocaleString()} accepted readings in µGy/hour · lines break at excluded timestamps</p>
               </div>
               <div className="btn-row" role="group" aria-label="Rate axis scale">
                 <button type="button" className="btn btn-secondary btn-sm" aria-pressed={logScale} onClick={() => setLogScale(true)}>Log scale</button>
@@ -70,12 +69,14 @@ export default function Environment() {
             </p>
           </section>
 
-          <div className="split">
+          <LiveRadiation spanSeconds={env.integration.span_seconds} finalDose={env.integration.estimated_sensor_dose_uGy} />
+
+          <div className="split radiation-dose">
             <section className="card" aria-labelledby="dose-title">
               <div className="card-head">
                 <div>
                   <h2 id="dose-title">Estimated accumulated sensor dose</h2>
-                  <p>Chart 3 · running sum over accepted intervals only · flat and interrupted across exclusions</p>
+                  <p>Accepted-interval integration · running sum over accepted intervals only · flat and interrupted across exclusions</p>
                 </div>
               </div>
               <SensorDoseChart env={env} />
@@ -102,14 +103,14 @@ export default function Environment() {
                 <span className="dose-value">{fmt(env.integration.estimated_sensor_dose_uGy, 2)} <small>µGy</small></span>
                 <span className="small muted">At the DosTel1 sensor — not a personal, organ or effective dose.</span>
               </div>
-              <dl className="kv small">
+              <details className="disclosure"><summary>Integration methodology</summary><dl className="kv small">
                 <dt>Coverage</dt><dd>{duration(env.integration.covered_seconds)} of {duration(env.integration.span_seconds)} ({fmt((env.integration.coverage_ratio ?? 0) * 100, 2)}%)</dd>
                 <dt>Intervals</dt><dd>{env.integration.included_intervals.toLocaleString()} included · {env.integration.excluded_intervals.length} excluded</dd>
                 <dt>Gap rule</dt><dd>≤ {env.integration.max_gap_seconds} s (engineering coverage rule, not a NASA threshold)</dd>
                 <dt>Rule</dt><dd>{env.integration.rule_version}</dd>
               </dl>
               <div className="formula">{env.integration.method}</div>
-              <p className="small muted">No extrapolation before the first or after the last record. No Gy→Sv conversion, no limit comparison, no safe/unsafe signal.</p>
+              <p className="small muted">No extrapolation before the first or after the last record. No Gy→Sv conversion, no limit comparison, no safe/unsafe signal.</p></details>
               <div className="btn-row">
                 <button type="button" className="btn btn-primary" onClick={() => open({ kind: "evidence", id: env.summary_evidence_id })}>Inspect estimate</button>
                 <button type="button" className="btn btn-secondary" onClick={() => open({ kind: "evidence", id: env.summary_evidence_id, section: "review" })}>
@@ -164,12 +165,12 @@ export default function Environment() {
             </details>
           </section>
 
-          <section className="card" aria-labelledby="limits-title">
+          <details className="disclosure radiation-limits"><summary>Scientific limitations &amp; interpretation</summary><section className="card" aria-labelledby="limits-title">
             <h2 id="limits-title" style={{ marginBottom: 8 }}>What this record cannot tell us</h2>
             <ul className="ev-list">{env.limitations.map((l) => <li key={l}>{l}</li>)}</ul>
-          </section>
+          </section></details>
         </>
       ) : null}
-    </>
+    </div>
   );
 }
