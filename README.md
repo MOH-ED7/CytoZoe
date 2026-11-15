@@ -264,6 +264,7 @@ Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR Rad
 
 Code licence: see [LICENSE](LICENSE). NASA data remain subject to their providers' terms.
 
+---
 
 ## Release verification — 15 November 2026
 
