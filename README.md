@@ -148,7 +148,7 @@ npm run e2e                    # full browser suite; installed Chrome/Edge requi
 ```
 The real-data backend and E2E tests need `data/raw/` staged (`python scripts/fetch_data.py --all`). Without it they are **skipped, not faked**. See [docs/TEST_REPORT.md](docs/TEST_REPORT.md) for the latest run.
 
----
+
 
 ## Datasets
 
