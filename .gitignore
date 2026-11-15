@@ -1,0 +1,36 @@
+# Dependencies and build output
+node_modules/
+frontend/dist/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+*.tsbuildinfo
+
+# Local runtime state: SQLite, WAL, review notes — NEVER commit
+runtime/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Immutable downloaded NASA source files and reproducible processed outputs.
+# Re-create with scripts/fetch_data.py; provenance lives in data/manifests/.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Test artefacts
+test-results/
+playwright-report/
+coverage/
+
+# Secrets, local model weights, OS noise
+.env
+.env.*
+!.env.example
+*.pem
+*.gguf
+.DS_Store
+Thumbs.db
