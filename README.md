@@ -148,7 +148,7 @@ npm run e2e                    # full browser suite; installed Chrome/Edge requi
 ```
 The real-data backend and E2E tests need `data/raw/` staged (`python scripts/fetch_data.py --all`). Without it they are **skipped, not faked**. See [docs/TEST_REPORT.md](docs/TEST_REPORT.md) for the latest run.
 
----
+
 
 ## Datasets
 
@@ -264,6 +264,7 @@ Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR Rad
 
 Code licence: see [LICENSE](LICENSE). NASA data remain subject to their providers' terms.
 
+---
 
 ## Release verification — 15 November 2026
 
@@ -279,3 +280,7 @@ Code licence: see [LICENSE](LICENSE). NASA data remain subject to their provider
 Browser checks cover all 140 chart measurements, all 140 Overview values, both baseline definitions, selected versus hovered points, rapid participant/marker changes, source inspection, review editing and audit, HTTP 409 draft preservation, live synchronization, real server-restart persistence, HTML/JSON downloads, network isolation and responsive navigation. The final sidebar cleanup preserves header connectivity, synchronization, credits and source limitations.
 
 See the existing [implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) and [test report](docs/TEST_REPORT.md) for reproducible commands, evidence and limits. Build and runtime outputs, local dependencies, raw downloads and review databases are deliberately excluded from Git. A fresh checkout must run setup before starting; the running developer preview at :8030 uses an isolated QA database, while the documented demo launcher defaults to :8000.
+
+## Railway public judge demo
+
+The Docker deployment builds React and installs FastAPI, verifies the pinned NASA downloads, and imports data using the existing scripts. It requires a Railway volume at `/data` and runs a **read-only public entry point**: evidence, replay and exports work; anonymous review writes/imports are blocked. Local startup remains writable and loopback-only. See [Railway deployment and DNS instructions](docs/RAILWAY_DEPLOYMENT.md). Deployment is not claimed until a working HTTPS URL is verified.
