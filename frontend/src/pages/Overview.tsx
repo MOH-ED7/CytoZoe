@@ -9,7 +9,7 @@ import { MetricCard } from "../components/MetricCard";
 import { MissionBriefPanel } from "../components/MissionBrief";
 import { PageHeader } from "../components/PageHeader";
 import { ParticipantSelect, SampleSelect } from "../components/Selectors";
-import { Alert, Empty, ErrorState, Skeleton } from "../components/StatusViews";
+import { Alert, ErrorState, Skeleton } from "../components/StatusViews";
 import { fmt, REVIEW_LABEL } from "../lib/format";
 import { useAsync } from "../lib/useAsync";
 import { useHealthSelection } from "../lib/useHealthSelection";
@@ -64,7 +64,7 @@ export default function Overview() {
 
           <div className="overview-flow">
             <div className="stack" style={{ gap: 24, minWidth: 0 }}>
-              <section className="card" aria-labelledby="review-title">
+              <section className={`card${flagged.length === 0 ? " overview-review-empty" : ""}`} aria-labelledby="review-title">
                 <div className="card-head">
                   <div>
                     <p className="card-kicker">Source-range observations</p>
@@ -76,7 +76,7 @@ export default function Overview() {
                   </span>
                 </div>
                 {flagged.length === 0 ? (
-                  <Empty>No measurements outside supplied laboratory bounds for this visit. This does not assess overall health.</Empty>
+                  <p className="overview-empty-message">{flagged.length} of {data.cards.length} measurements outside supplied ranges. This does not assess overall health.</p>
                 ) : flagged.map((ev) => (
                   <div className="finding" key={ev.evidence_id}>
                     <div style={{ minWidth: 0 }}>

@@ -1,5 +1,23 @@
 # Test report
 
+## Final GitHub release verification — 15 November 2026
+
+Current release includes the final canonical Trends selection/preview fixes, compact Overview empty state and shared sidebar footer cleanup. No backend, calculations, API, datasets, exports or audit logic changed. README presents all five real application screens and preserves NASA citations and AI-use disclosure.
+
+Fresh results: **61 backend tests and 25 browser tests passed**; production build, TypeScript and strict source verification passed. Component suite: **Blocked: worker initialization timed out before assertions**. Manual final 200% zoom/assistive-technology checks remain incomplete. Earlier results below are historical and do not supersede this fresh run. The sidebar live-sync test now verifies the actual SSE response and cross-tab updates, rather than the removed footer label.
+
+Evidence: [build](test-logs/github-release-build.txt), [backend / TypeScript / component result](test-logs/github-release-tests.txt), [browser](test-logs/github-release-browser.txt), [sources](test-logs/github-release-sources.txt).
+
+## Current stabilization verification — 15 November 2026
+
+- Full installed-Chrome browser suite: **25 passed (2.3m)**; targeted selection/chart run: **5 passed**.
+- Build/TypeScript and strict NASA source verification: passed. All chart/Overview measurements, both baseline fixtures, preview/selection separation, rapid context changes, saved-review editing, exports, audit, restart persistence and 409 behavior remain verified.
+- Component tests: **blocked before assertions**, 60-second worker startup timeouts with bounded single-worker and alternate module-runner retries.
+- Native 200% zoom for the final consolidated layout: unconfirmed after window-focus interruption; prior zoom evidence does not establish the current layout. Automated four-width accessibility/reflow and inspected desktop/mobile screenshots pass.
+- Backend unchanged; previous 61-pass backend run is historical.
+
+See the existing [implementation report](FINAL_IMPLEMENTATION_REPORT.md) for exact changed files and [final browser evidence](test-logs/release-stabilization-browser.txt). Earlier results below are historical.
+
 ## Latest premium release — 15 November 2026
 
 - Production build and TypeScript: passed.

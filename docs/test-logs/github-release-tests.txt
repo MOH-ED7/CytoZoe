@@ -1,0 +1,46 @@
+
+> cytozoe@1.0.0 test
+> node scripts/run-python.mjs -m pytest backend -q && npm --prefix frontend run typecheck && npm --prefix frontend test
+
+.............................................................            [100%]
+=============================== warnings summary ===============================
+tests/integration/test_api.py::test_t01_osd575_counts
+  /Users/mohamedyusuf/Desktop/CytoZoe/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 18.96s
+
+> cytozoe-frontend@1.0.0 typecheck
+> tsc -b --pretty
+
+
+> cytozoe-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v5.1.0 /Users/mohamedyusuf/Desktop/CytoZoe/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files /Users/mohamedyusuf/Desktop/CytoZoe/frontend/src/tests/components.test.tsx.
+ ❯ ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5932:94
+ ❯ Pool.schedule ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5932:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5429:58
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ process.processTimers node:internal/timers:543:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  no tests
+      Tests  no tests
+     Errors  1 error
+   Start at  18:11:24
+   Duration  60.02s

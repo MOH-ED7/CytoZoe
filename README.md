@@ -6,7 +6,31 @@ CytoZoe is a **local-first astronaut health evidence and review workspace**. It 
 
 > **Research demonstration, not a clinical device.** All data are public, historical and anonymised. CytoZoe does not diagnose, predict illness, estimate personal radiation dose or link the two case studies causally. It shows no live vital signs.
 
+## Explore CytoZoe
+
+A source-backed research workflow: **inspect → compare → explain → record → reopen → audit → export**.
+
+### Landing · Orbital Intelligence
+
+![CytoZoe landing page](docs/screenshots/orbital-landing-1440.png)
+
+### Health Overview · five biomarkers, original evidence
+
 ![Health Overview](docs/screenshots/overview-1440.png)
+
+### Health Trends · categorical visits and traceable comparisons
+
+![Health Trends](docs/screenshots/health-1440.png)
+
+### Radiation Review · recorded replay and transparent quarantine
+
+![Radiation Review](docs/screenshots/environment-1440.png)
+
+### Review Log & Export · persistent research decisions
+
+![Review Log and Export](docs/screenshots/reviews-1440.png)
+
+Screenshots show the actual local application using historical NASA data. Visible review notes are isolated QA records created through the real workflow. Landing artwork is AI-generated illustration, not NASA photography or measurement evidence.
 
 ---
 
@@ -60,6 +84,21 @@ CytoZoe closes that review-workflow gap in one complete loop: **inspect → expl
 Stack: React 19 + TypeScript + Vite + Recharts · FastAPI + Pydantic + pandas · SQLite (WAL, versioned migrations). The server binds to **127.0.0.1:8000** and serves the API and the built interface from one origin. It uses no CDNs, analytics or cloud APIs, and the Inter font is bundled locally.
 
 ---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    CSV[Public NASA CSV sources] --> Verify[SHA-256 verification and ingestion]
+    Verify --> DB[(Local SQLite)]
+    DB --> API[FastAPI: deterministic engines and evidence]
+    API --> UI[React workspace and Recharts]
+    UI --> Reviews[Versioned reviews and audit history]
+    Reviews --> DB
+    API --> Export[Self-contained HTML and JSON packets]
+```
+
+The browser renders backend measurements and comparisons. E1 validates provenance and quarantines conflicting source rows; E2 computes descriptive biomarker comparisons; E3 integrates accepted sensor intervals. Server-sent events deliver recorded replay and review synchronization. Health and environmental cases remain separate throughout evidence, reviews and exports.
 
 ## Quick start
 
@@ -226,14 +265,17 @@ Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR Rad
 Code licence: see [LICENSE](LICENSE). NASA data remain subject to their providers' terms.
 
 
-## Final integration pass — 15 November 2026
+## Release verification — 15 November 2026
 
-See [final implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) for current verification, changes and remaining release gates. Earlier test results above are historical.
+| Check | Actual result |
+|---|---|
+| Production build and strict TypeScript | Passed |
+| Backend regression suite | **61 passed**; one existing Starlette/httpx deprecation warning |
+| Full Chrome browser suite | **25 passed** |
+| NASA source SHA-256 and scientific counts | Both pinned datasets verified |
+| Frontend component tests | Blocked: worker initialization timed out before assertions |
+| Final manual zoom / assistive-technology review | Incomplete; no unconditional accessibility sign-off claimed |
 
-## Premium interface release — 15 November 2026
+Browser checks cover all 140 chart measurements, all 140 Overview values, both baseline definitions, selected versus hovered points, rapid participant/marker changes, source inspection, review editing and audit, HTTP 409 draft preservation, live synchronization, real server-restart persistence, HTML/JSON downloads, network isolation and responsive navigation. The final sidebar cleanup preserves header connectivity, synchronization, credits and source limitations.
 
-All five pages now share the finished navy/teal workspace design. Health Trends uses independent historical points, per-visit bounds where needed, and an on-demand evidence drawer. Overview, radiation replay/conflict inspection, review editing/audit history and HTML/JSON exports retain the existing backend contracts and scientific calculations.
-
-Latest verification: **61 backend tests and 22 browser tests passed**, production build and TypeScript passed, both pinned NASA source hashes verified. **The four component tests did not execute: Vitest worker initialization timed out.** This remains a verification limitation, not a passing component result. Full manual 200% zoom/assistive-technology verification is also incomplete. See the existing [implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) and [test report](docs/TEST_REPORT.md).
-
-One-time installation remains `npm run setup`, followed by `npm start` for the offline demo at http://127.0.0.1:8000. The developer QA preview at :8030 is an isolated test database, not the default production startup. Install dependencies independently in a fresh clone; local `.venv` and `node_modules` links are not distributed.
+See the existing [implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) and [test report](docs/TEST_REPORT.md) for reproducible commands, evidence and limits. Build and runtime outputs, local dependencies, raw downloads and review databases are deliberately excluded from Git. A fresh checkout must run setup before starting; the running developer preview at :8030 uses an isolated QA database, while the documented demo launcher defaults to :8000.

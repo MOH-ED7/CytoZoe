@@ -148,3 +148,9 @@
   .reviews-premium table.data td { display: block; border: 0; padding: 5px 0; white-space: normal; overflow-wrap: anywhere; }
   .reviews-premium table.data td::before { content: attr(data-label); display: block; color: var(--l-muted); font: 9px/1.7 var(--mono); }
 }
+
+/* Only the no-flags Overview state is compacted; flagged findings retain their existing layout. */
+.overview-premium .overview-review-empty { padding: 16px 22px; }
+.overview-premium .overview-review-empty .card-head { margin-bottom: 7px; }
+.overview-premium .overview-empty-message { color: var(--muted); font-size: 12px; line-height: 1.7; }
+@media (max-width:600px) { .overview-premium .overview-review-empty { padding: 14px; } }

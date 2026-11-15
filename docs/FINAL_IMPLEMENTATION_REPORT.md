@@ -1,5 +1,43 @@
 # Final integrated implementation — 15 November 2026
 
+## Final GitHub release verification — 15 November 2026
+
+Current release includes the final canonical Trends selection/preview fixes, compact Overview empty state and shared sidebar footer cleanup. No backend, calculations, API, datasets, exports or audit logic changed. README presents all five real application screens and preserves NASA citations and AI-use disclosure.
+
+Fresh results: **61 backend tests and 25 browser tests passed**; production build, TypeScript and strict source verification passed. Component suite: **Blocked: worker initialization timed out before assertions**. Manual final 200% zoom/assistive-technology checks remain incomplete. Earlier results below are historical and do not supersede this fresh run. The sidebar live-sync test now verifies the actual SSE response and cross-tab updates, rather than the removed footer label.
+
+Evidence: [build](test-logs/github-release-build.txt), [backend / TypeScript / component result](test-logs/github-release-tests.txt), [browser](test-logs/github-release-browser.txt), [sources](test-logs/github-release-sources.txt).
+
+## Current focused release stabilization — 15 November 2026
+
+This section supersedes the earlier UI-layout and test summaries below. No new redesign, dependency, backend, dataset, API, schema, export or audit-engine change was made. No push or submission was performed. The current local working state was preserved with checkpoint `checkpoint/release-stabilization-20261115` (`35e90a7d409211c3ea1207ac34dabed95483089f`) and a separate temporary archive of pre-existing untracked work.
+
+### Exact source/test files changed in this pass
+
+- `frontend/src/pages/Health.tsx`: one compact persistent selected-observation area above the plot, with all existing evidence/review actions; rapid control changes merge against the current canonical URL through the existing selection hook. Source-only chart/replay responses no longer refetch for review events, preserving keyboard targets; the selected review response still refreshes.
+- `frontend/src/charts/HealthVisitChart.tsx`: preview state is transient, explicitly labelled, and separate from canonical selection. The tooltip is positioned near its point, clamped to the plotting container, and cleared on selection/context or viewport changes. Removed the duplicate upper readout/instruction block.
+- `frontend/src/styles/health-trends.css`: compact consolidated area, legible legend, stable selection spacing and non-obstructing tooltip.
+- `frontend/src/pages/Overview.tsx` and `frontend/src/styles/workspace-premium.css`: only the genuine zero-flags state is compacted; participant/visit context and source-derived counts remain. Actual flagged findings and biomarker cards are unchanged.
+- `frontend/e2e/trends.spec.ts`: asserts one persistent selected region above the plot, retaining all scientific checks.
+- `frontend/e2e/stabilization.spec.ts`: tests persistent R+1 selection, temporary L-3 preview, canonical URL/dropdown/evidence context, edit/save, keyboard Space, rapid participant/marker switching, series-summary independence, stable plot position, compact zero-flags and real flagged findings.
+- Existing `docs/FINAL_IMPLEMENTATION_REPORT.md` and `docs/TEST_REPORT.md`: current verification and limitations. Other generated changes are QA screenshots/logs, not application-page redesigns.
+
+### Final results
+
+25 passed (2.3m) in the complete standard installed-Chrome browser suite, including both new stabilization tests. The preceding targeted stabilization/chart run also passed 5/5. Production build and TypeScript passed; strict pinned-source verification passed. All 140 chart values and all 140 Overview values were checked against the backend. Existing fixture 1.37 mg/dL, supplied 0.60–1.35, retrospective 1.2367/n=3 and known-before-visit 1.17/n=2 remains verified through the evidence drawer. Review persistence, real restart, audit, exports, SSE/409, offline request isolation and other approved-page workflows pass. No scientific assertion was weakened.
+
+The initial run exposed a stale tooltip position on resize, a rapid URL selection race and an unnecessary source-series refresh after review save that could drop keyboard preview focus. These were fixed before the final green run. The new edit test was also corrected to use the existing Save changes action for an existing review.
+
+**Blocked checks:** component tests did not execute. Both a single-worker bounded-heap retry and Vitest's alternate experimental Vite module runner timed out during worker initialization after 60 seconds. No component assertion failed or was changed. Fresh native 200% zoom verification in this pass was interrupted by Chrome window-focus changes; it is not claimed as passed. Automated 390/768/1024/1440 reflow/axe checks passed, and final desktop/mobile captures were visually inspected. Backend source/calculations were untouched; the previous 61-pass backend run is historical and was not rerun in this frontend-only pass.
+
+Landing, Radiation Review and Review Log source files/styles are unchanged. Shared workspace CSS adds only selectors scoped to Overview's empty state. Local build is ready for demonstration of the tested core workflows; unconditional full-verification release sign-off remains pending component-runner and final manual zoom/assistive-technology checks.
+
+Screenshots: [desktop Trends](screenshots/release-trends-1440.png), [mobile Trends](screenshots/release-trends-390.png), [compact Overview empty state](screenshots/release-overview-empty-1440.png). Records shown are real isolated QA records, not fabricated application data.
+
+Evidence: [browser](test-logs/release-stabilization-browser.txt), [build](test-logs/release-stabilization-build.txt), [component attempt](test-logs/release-stabilization-components.txt), [component retry](test-logs/release-stabilization-components-retry.txt), [source verification](test-logs/release-stabilization-sources.txt).
+
+## Earlier release records
+
 ## Current premium release — supersedes earlier verification below
 
 Official submission repository: `MOH-ED7/CytoZoe`, branch `main`. All five pages are complete: cinematic Landing, Health Overview, categorical-point Health Trends, Radiation Review, and Review Log & Export. The approved Landing and Trends were preserved during the three-page pass; before/after screenshots were pixel-identical, and their source files remained byte-identical. Backend engines, API contracts, source hashes, database schema and review concurrency calculations were unchanged.

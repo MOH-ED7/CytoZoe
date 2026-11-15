@@ -47,8 +47,9 @@ test("Live sync: a review saved in one window appears instantly in another", asy
   const ctx = await browser.newContext();
   const a = await ctx.newPage();
   const b = await ctx.newPage();
+  const stream = b.waitForResponse(r => new URL(r.url()).pathname === "/api/events" && r.status() === 200);
   await b.goto("/reviews");
-  await expect(b.getByText("Live sync on")).toBeVisible();
+  expect((await stream).headers()["content-type"]).toContain("text/event-stream");
   // Wait until the review list has finished loading (table caption or empty state) before counting rows.
   await b.locator("main table.data caption, main .empty").first().waitFor();
   const before = await b.locator("main table.data tbody tr").count();

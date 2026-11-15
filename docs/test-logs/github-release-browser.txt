@@ -1,0 +1,40 @@
+
+> cytozoe@1.0.0 e2e
+> npm --prefix frontend run e2e
+
+
+> cytozoe-frontend@1.0.0 e2e
+> playwright test
+
+
+Running 25 tests using 1 worker
+
+(node:18610) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 e2e/environment.spec.ts:4:1 › T08/ENV-01/ENV-02: radiation quality strip, conflict evidence and a participant-free review (2.5s)
+  ✓   2 e2e/final-release.spec.ts:4:1 › Final overview: progressive disclosure, visit navigation, drawer and export error recovery (1.7s)
+  ✓   3 e2e/frontend-v2.spec.ts:7:1 › F6 landing: local imagery, no API calls, credits, accessible, CTA opens the workspace (2.4s)
+  ✓   4 e2e/frontend-v2.spec.ts:38:1 › F2 Mission Brief renders exactly the backend payload for all 28 samples (6.3s)
+  ✓   5 e2e/frontend-v2.spec.ts:68:1 › F2 brief follow-up opens the shared evidence drawer on the note field (578ms)
+  ✓   6 e2e/frontend-v2.spec.ts:82:1 › F3 Health Trends separates the retrospective and the replay (prior-visits-only) baselines (593ms)
+  ✓   7 e2e/journey.spec.ts:8:1 › T17–T19, T23, T26–T27: C001 L-3 creatinine → evidence → explain → save → reload → export, network-isolated (2.0s)
+  ✓   8 e2e/journey.spec.ts:89:1 › Health Trends: categorical visits, URL state, inline follow-up keeps the measurement visible (791ms)
+  ✓   9 e2e/landing.spec.ts:5:1 › Orbital landing: responsive local images, real navigation, mobile menu and offline workspace handoff (16.5s)
+  ✓  10 e2e/quality.spec.ts:13:1 › T28/UX-01: automated axe checks on all four routes and the drawer (WCAG 2.x A/AA rules) (5.9s)
+  ✓  11 e2e/quality.spec.ts:31:1 › T28: keyboard-only core journey with focus trap and focus restore (633ms)
+  ✓  12 e2e/quality.spec.ts:59:1 › T29: responsive layouts at 390/768/1024/1440 px without horizontal page scroll (16.3s)
+  ✓  13 e2e/quality.spec.ts:82:1 › T30: service-unavailable and no-data states never fabricate content (366ms)
+  ✓  14 e2e/quality.spec.ts:97:1 › T21: stale second tab gets a 409 conflict and keeps its draft (1.5s)
+  ✓  15 e2e/realtime.spec.ts:4:1 › Radiation replay streams real readings in real time, surfaces conflicts, and pauses (12.1s)
+  ✓  16 e2e/realtime.spec.ts:31:1 › Health timeline replay drives the overview visit by visit (6.4s)
+  ✓  17 e2e/realtime.spec.ts:46:1 › Live sync: a review saved in one window appears instantly in another (932ms)
+  ✓  18 e2e/restart.spec.ts:32:1 › T20: saved review and history survive a full server restart (32.6s)
+  ✓  19 e2e/stabilization.spec.ts:4:1 › Release stabilization: canonical click selection, transient previews, evidence and saved follow-up (3.5s)
+  ✓  20 e2e/stabilization.spec.ts:63:1 › Release stabilization: factual compact Overview empty state and real flagged findings (1.5s)
+  ✓  21 e2e/trends.spec.ts:5:1 › Trends: all 140 observations retain source values, actual points, linear visual guides, per-visit bounds and URL selection (13.1s)
+  ✓  22 e2e/trends.spec.ts:52:1 › Trends: dark layout, disclosures, keyboard points, evidence baselines and responsive access (6.9s)
+  ✓  23 e2e/trends.spec.ts:92:1 › Trends: missing observations break visual guides and hover does not change selection (454ms)
+  ✓  24 e2e/workspace-premium.spec.ts:5:1 › Premium overview retains all 140 source-backed values and seven categorical visits (2.0s)
+  ✓  25 e2e/workspace-premium.spec.ts:29:1 › Premium pages: responsive, accessible, source totals, scale modes and final screenshots (22.9s)
+
+  25 passed (2.8m)

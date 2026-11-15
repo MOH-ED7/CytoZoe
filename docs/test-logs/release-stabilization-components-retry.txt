@@ -1,0 +1,27 @@
+
+ RUN  v5.1.0 /Users/mohamedyusuf/Desktop/CytoZoe/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files /Users/mohamedyusuf/Desktop/CytoZoe/frontend/src/tests/components.test.tsx.
+ ❯ ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5932:94
+ ❯ Pool.schedule ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5932:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../CytoZoe_Nasa_project/frontend/node_modules/vitest/dist/chunks/index.Di8au7q4.js:5429:58
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ process.processTimers node:internal/timers:543:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  no tests
+      Tests  no tests
+     Errors  1 error
+   Start at  17:27:31
+   Duration  60.01s
+

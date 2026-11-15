@@ -1,0 +1,25 @@
+
+> cytozoe@1.0.0 build
+> npm --prefix frontend run build
+
+
+> cytozoe-frontend@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 429 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                              0.64 kB │ gzip:   0.39 kB
+dist/assets/inter-vietnamese-wght-normal-CBcvBZtf.woff2     10.25 kB
+dist/assets/inter-greek-ext-wght-normal-DlzME5K_.woff2      11.23 kB
+dist/assets/inter-cyrillic-wght-normal-DqGufNeO.woff2       18.74 kB
+dist/assets/inter-greek-wght-normal-CkhJZR-_.woff2          18.99 kB
+dist/assets/inter-cyrillic-ext-wght-normal-BOeWTOD4.woff2   25.96 kB
+dist/assets/inter-latin-wght-normal-Dx4kXJAl.woff2          48.25 kB
+dist/assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2      85.06 kB
+dist/assets/index-Bi5Ng19M.css                              78.49 kB │ gzip:  16.06 kB
+dist/assets/index-aw-IsaoV.js                              779.85 kB │ gzip: 228.58 kB
+
+✓ built in 267ms

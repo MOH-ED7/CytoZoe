@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useDrawer, useLive, useServiceStatus } from "../app/providers";
 import { REVIEW_LABEL } from "../lib/format";
 import { BrandMark, IconCheck, IconClose, IconLog, IconMenu, IconOverview, IconRadiation, IconTrend } from "./icons";
@@ -59,8 +59,7 @@ function Toasts() {
 export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const { status, state } = useServiceStatus();
-  const { connected } = useLive();
+  const { state } = useServiceStatus();
   // Close only on page change: query updates (URL normalisation, timeline replay) must not close the menu.
   useEffect(() => setMenuOpen(false), [location.pathname]);
 
@@ -90,14 +89,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </ul>
         </nav>
         {state === "READY" ? <RecentReviews /> : null}
-        <div className="side-foot">
-          <span className={`live-pill${connected ? "" : " off"}`} role="status">
-            <span className="pulse" aria-hidden="true" />{connected ? "Live sync on" : state === "SERVICE_UNAVAILABLE" ? "Local service offline" : "Connecting…"}
-          </span>
-          <span>Runs locally on this computer · historical NASA research data · not a clinical device</span>
-          <Link to="/" className="side-about">About CytoZoe &amp; photo credits</Link>
-          {status ? <span className="ver">v{status.app_version} · {status.git_version}</span> : null}
-        </div>
+
       </aside>
       <main id="main" className="main" tabIndex={-1}>
         <div className="content">{children}</div>
