@@ -1,36 +1,39 @@
-# CytoZoe — Understand the change. Keep the evidence.
+# CytoZoe
 
-**NASA Space Apps Challenge 2026 · Team CytoZoe · Challenge: [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)**
+**Understand the change. Keep the evidence.**
 
-CytoZoe is a **local-first astronaut health evidence and review workspace**. It turns **real historical NASA biomarker samples** into understandable comparisons against a person's own baseline and the laboratory range supplied in the source. It shows a **separate ISS radiation record** with every data-quality decision visible. A reviewer can then **record, reopen and export a traceable follow-up without any internet connection**.
+An **offline-first astronaut health evidence and review workspace**, built for the **NASA Space Apps Challenge 2026**. CytoZoe uses authentic, historical NASA research measurements to help reviewers understand changes, inspect their sources, record follow-ups and export traceable evidence.
 
-> **Research demonstration, not a clinical device.** All data are public, historical and anonymised. CytoZoe does not diagnose, predict illness, estimate personal radiation dose or link the two case studies causally. It shows no live vital signs.
+[**The challenge**](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/) · [**Explore the interface**](#explore-cytozoe) · [**Run locally**](#quick-start) · [**3-minute judge walkthrough**](docs/DEMO_SCRIPT.md) · [**Source evidence**](docs/DATASETS.md)
+
+> **Research demonstration — not a medical device.** No diagnosis, medical advice, illness prediction or live vital signs. Health and radiation are separate historical cases, **not person-matched**. The app uses deterministic explanations, **not a runtime AI model**.
 
 ## Explore CytoZoe
 
-A source-backed research workflow: **inspect → compare → explain → record → reopen → audit → export**.
+![CytoZoe landing page — Orbital Intelligence](docs/screenshots/orbital-landing-1440.png)
 
-### Landing · Orbital Intelligence
+| **Health Overview** | **Radiation Review** |
+|:---:|:---:|
+| ![Biomarker overview from NASA records](docs/screenshots/overview-1440.png) | ![Historical ISS radiation review](docs/screenshots/environment-1440.png) |
+| Compare five biomarkers with source laboratory ranges | Inspect recorded sensor observations and quarantined conflicts |
 
-![CytoZoe landing page](docs/screenshots/orbital-landing-1440.png)
+| **Health Trends** | **Review Log & Export** |
+|:---:|:---:|
+| ![Health trends and source evidence](docs/screenshots/health-1440.png) | ![Review decisions, audit history and exports](docs/screenshots/reviews-1440.png) |
+| Inspect historical visits and trace each value | Save follow-ups locally and export evidence packets |
 
-### Health Overview · five biomarkers, original evidence
+*Screenshots show the real local application with historical NASA data and isolated QA review records. Landing artwork is AI-generated illustration, not NASA photography or scientific data.*
 
-![Health Overview](docs/screenshots/overview-1440.png)
+### A complete evidence workflow
 
-### Health Trends · categorical visits and traceable comparisons
+**Inspect → compare → explain → record → reopen → audit → export.**
 
-![Health Trends](docs/screenshots/health-1440.png)
+- **Grounded observations:** 140 biomarker measurements from 4 anonymised Inspiration4 participants, with visit-specific source ranges.
+- **Transparent uncertainty:** 4 conflicting duplicate timestamps in a separate NASA ISS radiation record are preserved and excluded from calculations.
+- **Auditable follow-up:** source-linked explanations, persistent review notes, versioned edits and HTML/JSON exports.
+- **Autonomous by design:** core local workflows run without an internet connection after initial setup. The public Railway demo, if deployed, is intentionally **read-only**.
 
-### Radiation Review · recorded replay and transparent quarantine
-
-![Radiation Review](docs/screenshots/environment-1440.png)
-
-### Review Log & Export · persistent research decisions
-
-![Review Log and Export](docs/screenshots/reviews-1440.png)
-
-Screenshots show the actual local application using historical NASA data. Visible review notes are isolated QA records created through the real workflow. Landing artwork is AI-generated illustration, not NASA photography or measurement evidence.
+[Explore all features](docs/PRODUCT_FEATURES.md) · [View scientific data and exclusions](docs/DATASETS.md) · [Read verified test evidence](docs/TEST_REPORT.md)
 
 ---
 
@@ -53,35 +56,15 @@ CytoZoe closes that review-workflow gap in one complete loop: **inspect → expl
 | Act on information | Saves notes and status with an audit trail; exports an HTML/JSON handoff packet | No automatic recommendation or transmission |
 | Support autonomy | Every core operation runs with the internet disconnected after setup | Needs the local server process running |
 
-## What's inside
+## Key capabilities
 
-- **5 pages:**
-  - Landing / introduction
-  - Health Overview
-  - Health Trends
-  - Radiation Review
-  - Review Log & Export
-- **3 charts:**
-  - blood marker by visit
-  - sensor dose rate
-  - estimated accumulated sensor dose
-- **3 deterministic engines:**
-  - **E1 ingestion & quality:** hashing, schema validation, conflict quarantine
-  - **E2 health comparisons:** retrospective preflight mean, Δ, %Δ, strict range status
-  - **E3 environment integration:** trapezoidal estimate over covered intervals only
-- **1 evidence drawer:** a *Verified explanation* assistant built from fixed, source-bound templates. No language model is involved.
-- **Real-time features, with no fabricated "live" data:**
-  - **Radiation replay stream:** the server streams the 1,194 recorded DosTel1 readings over server-sent events, in their original order, at 300×, 1200× or 3600× speed. Rate, peak, estimated dose so far and coverage update as they arrive. Data-quality conflicts appear in an event feed at the moment the stream reaches them. Always labelled *Replay · not live*.
-  - **Mission timeline replay:** steps through a participant's 7 real blood draws. The whole Overview (cards and findings) updates visit by visit, and range flags appear in an event feed.
-  - **Live sync:** saving or changing a review pushes an event to every open window. Tabs refresh instantly, the sidebar's *Recent reviews* updates, and other windows get a notice. A tab with an unsaved draft is never silently rebased; it gets a 409 conflict prompt instead.
-- **Conversational assistant:** suggested questions or a typed question. Typed text is routed by fixed keyword rules to the same verified templates, so there is no language model, and the typed text is never echoed into an answer.
-- **Persistent reviews:** statuses OPEN / FOLLOW_UP_REQUESTED / REVIEWED, optimistic versioning (HTTP 409 on stale edits), and an audit history.
-- **Local export:** a self-contained printable HTML packet plus a JSON packet, with health and environment sections kept separate. Both carry source hashes, provenance, rule versions and limitations.
-- **Mission Health Intelligence Brief** (`GET /api/mission/brief`): one typed, source-linked summary of a historical sample. For each marker it gives what was observed, what it was compared with, the exact source row and column, why it was flagged, the limits, and what follow-up can be recorded. It is built only from the canonical evidence objects, so every number matches the evidence view and the export. See [docs/API_CONTRACT.md](docs/API_CONTRACT.md).
-- **Verified provenance:** only files whose SHA-256 is registered in the reviewed manifest can be stored as NASA data. A schema-valid but altered file is rejected (`SOURCE_HASH_MISMATCH`), even on an empty database.
-- **Operational readiness:** `/api/healthz` (liveness), `/api/readyz` (DB + migrations + verified data). Launchers report real readiness, refuse busy ports and leave no orphaned processes. `scripts/backup_db.py` makes and restores consistent database backups.
+- **Health comparisons:** participant baseline, original lab ranges, historical visit trends and source-row evidence.
+- **Radiation quality review:** recorded DosTel1 replay with transparent quarantine of conflicting rows; estimates are **sensor dose only**, never a personal dose.
+- **Review-to-handoff:** versioned notes, audit trail, stale-edit protection, cross-window synchronization and offline HTML/JSON export.
+- **Deterministic evidence:** SHA-256 source verification and fixed explanation templates; no generative AI at runtime.
+- **Full workflow:** five pages, three deterministic engines and locally reproducible source handling.
 
-Stack: React 19 + TypeScript + Vite + Recharts · FastAPI + Pydantic + pandas · SQLite (WAL, versioned migrations). The server binds to **127.0.0.1:8000** and serves the API and the built interface from one origin. It uses no CDNs, analytics or cloud APIs, and the Inter font is bundled locally.
+[Complete feature reference](docs/PRODUCT_FEATURES.md) · [API contract](docs/API_CONTRACT.md)
 
 ---
 
@@ -150,96 +133,27 @@ The real-data backend and E2E tests need `data/raw/` staged (`python scripts/fet
 
 
 
-## Datasets
+## NASA data and scientific boundaries
 
-The original one-page brief named four candidate data sources. The final MVP uses **two** of them, by design: they are the only ones that are public, real, documented, and honest to use without inventing data. All four are documented here so the team and judges can see exactly what was used and why.
+| Case | Authentic source | What the application uses |
+|---|---|---|
+| **Health** | NASA OSDR **OSD-575**, Inspiration4 (2021) | 4 anonymised participants × 7 visits × 5 blood biomarkers = **140 measurements** |
+| **Environment** | NASA OSDR RadLab, ISS **DosTel1** (1 March 2022) | **1,202 rows**, including **8 quarantined conflicting rows** at 4 timestamps; **1,194 accepted** |
 
-### 1. NASA OSD-575: Inspiration4 Comprehensive Metabolic Panel (**USED: health case**)
+The datasets come from different missions, times and people. **They are never joined**, and the application makes no exposure–health causal claim. All raw-source hashes, exact columns, sample calculations, data-quality decisions, licensing notes and exclusions are retained in the [detailed scientific data record](docs/DATASETS.md).
 
-| Field | Value |
-|---|---|
-| Provider | NASA Open Science Data Repository (OSDR) |
-| Study page | https://osdr.nasa.gov/bio/repo/data/studies/OSD-575 |
-| File | `LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv` |
-| Download URL | https://osdr.nasa.gov/geode-py/ws/studies/OSD-575/download?source=datamanager&file=LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv |
-| SHA-256 (verified 14 Nov 2026) | `5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9` |
-| Size | 8,506 bytes · UTF-8 with BOM · 28 data rows × 58 columns |
-| Licence | Study page lists **CC0-1.0**; citation preserved |
-| Subjects | 4 anonymised Inspiration4 (SpaceX, 2021) crew codes: C001, C002, C003, C004 |
-| Visits (7 each) | L-92, L-44, L-3 (days **before launch**), R+1, R+45, R+82, R+194 (days **after return**) |
-| Sample label | `Sample Name`, e.g. `C001_serum_L-3` |
-| Markers imported | Glucose (mg/dL), Sodium (mmol/L), Potassium (mmol/L), Creatinine (mg/dL), Calcium (mg/dL) |
-| Columns per marker | `{marker}_value_{unit}`, `{marker}_range_min_{unit}`, `{marker}_range_max_{unit}` |
-| Imported values | 140 of 140 present (28 samples × 5 markers), 0 parse issues |
-| Not used | The other 14 CMP analytes; race-based eGFR columns are deliberately excluded |
-
-Verified facts used as acceptance fixtures:
-- **C001 L-3 creatinine:** 1.37 mg/dL vs. a supplied upper bound of 1.35 mg/dL. This is outside the supplied range and was collected **before launch**. The retrospective preflight mean is (1.24 + 1.10 + 1.37)/3 = 1.236667, with n = 3.
-- **C001 R+1 glucose:** 90 mg/dL vs. a preflight mean of (83 + 80 + 69)/3 = 77.3333. That gives Δ = +12.6667 (+16.38%), within the supplied 65–99 range.
-- **C003 creatinine:** the supplied bounds change between pre- and post-flight samples (0.6–1.35 → 0.5–1.1). The chart therefore draws per-visit bounds instead of one band.
-
-Suitable for descriptive personal comparison and source-range review. **Not** suitable for continuous monitoring, disease labels, prediction, or exposure–health analysis: four people are not a validation cohort.
-
-### 2. NASA RadLab DosTel1: ISS Columbus, 1 March 2022 (**USED: separate environment case**)
-
-| Field | Value |
-|---|---|
-| Provider | NASA OSDR RadLab |
-| API documentation | https://visualization.osdr.nasa.gov/radlab/gui/data-api/ |
-| Instrument | https://visualization.osdr.nasa.gov/radlab/gui/knowledgebase/DosTel1 (ISS Columbus module; documented nominal cadence 300 s) |
-| Download URL | https://visualization.osdr.nasa.gov/radlab/api/?instrument_id=DosTel1&timestamp%3E=2022-03-01&timestamp%3C2022-03-02&absorbed_dose_rate&format=csv |
-| Local file name | `radlab_DosTel1_2022-03-01.csv` |
-| SHA-256 (verified 14 Nov 2026) | `d3f64e7f483c3ae2f08bb5e6633bae5091e661a988c434205ce6bb78c050f7e1` |
-| Size | 52,555 bytes · 1,202 rows · columns `timestamp,instrument_id,absorbed_dose_rate` |
-| Unit | µGy/hour (absorbed dose rate at the instrument) |
-| Time range | 2022-03-01T00:00:00 → 2022-03-01T23:58:34 (no timezone suffix; shown exactly as exported) |
-| Cadence observed | irregular: median 89 s, maximum 213 s |
-| Licence | Publicly accessible via the NASA API. **Redistribution terms not verified**, so the raw file is not committed |
-
-**Data-quality finding (real, in the source):** 4 timestamps appear twice with **different** rates:
-
-| Timestamp | Data row → rate (µGy/hour) |
-|---|---|
-| 09:15:00 | 464 → 10.1122485512821 · 465 → 9.853933 |
-| 09:20:00 | 468 → 5.61126966666667 · 469 → 4.474783 |
-| 18:25:00 | 946 → 5.46090767412141 · 947 → 5.312235 |
-| 18:30:00 | 950 → 6.03754233333333 · 951 → 5.625719 |
-
-All 8 rows are kept for audit and **quarantined** from analysis. They are never averaged, summed or first-picked. This leaves 1,198 unique timestamps and 1,194 accepted rows. The resulting estimate is **296.04 µGy at the sensor over 23 h 44 min 49 s of covered time (99.04% of the recorded span)**, from 1,189 included intervals with 4 excluded. The estimate is *not* a personal, organ or effective dose, and there is no Gy→Sv conversion and no limit comparison.
-
-### 3. NASA GLDS-174: gene-expression context (**NOT USED: deferred to future work**)
-
-Named in the original brief as molecular context. It was excluded from the MVP because:
-- it is not person-matched to the CMP samples;
-- it adds no reviewable measurement to the core workflow;
-- the PRD (v2.0 §0.4) forbids integrating it in P0.
-
-It remains a candidate for future research only. No GLDS-174 data was downloaded or used.
-
-### 4. BIDMC dataset: optional validation (**NOT USED: explicitly excluded**)
-
-Named in the brief as optional validation data. It was excluded because:
-- it is a non-astronaut clinical dataset;
-- using it would invite misleading "validation" claims for software that has no trained model;
-- the PRD (v2.0 §0.4) explicitly excludes BIDMC from the competition application.
-
-No BIDMC data was downloaded or used.
-
-### Why the two used datasets are never joined
-The OSD-575 samples come from Inspiration4 (2021). The DosTel1 record comes from the ISS on 1 March 2022. They are different missions, times and people, so there is **no** person-level dose. The API rejects attempts to combine them (`CROSS_CASE_LINK_REJECTED`), and the database enforces that environment reviews never carry a participant. Pairing exposure with physiology is future work, and it needs matched personal dosimetry and onboard measurements.
-
-Full provenance: [data/manifests/sources.json](data/manifests/sources.json) · [docs/SOURCES.md](docs/SOURCES.md) · [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md)
+[Source manifest](data/manifests/sources.json) · [Provenance](docs/SOURCES.md) · [Data dictionary](docs/DATA_DICTIONARY.md)
 
 ---
 
-## Security and privacy (local-only)
+## Privacy and limitations
 
-- Binds to `127.0.0.1` by default. The host-header allow-list and an origin check block cross-site writes, and there is no permissive CORS.
-- **The app makes no external network requests at runtime.** NASA data is fetched only by the setup CLI, from allow-listed HTTPS NASA hosts.
-- CSV import accepts only the two documented schemas: ≤ 10 MB, UTF-8, strict columns. Import is atomic and keeps the last good data on failure.
-- Notes are escaped everywhere, including the HTML export. The CSP blocks inline scripts. Logs never contain note text or file contents.
-- No secrets or API keys exist or are needed. `runtime/` (SQLite and notes) is gitignored.
-- No real PHI is involved, and no HIPAA, clinical or security certification is claimed. See [docs/SECURITY.md](docs/SECURITY.md).
+- Local startup binds to **127.0.0.1**; after setup the core application makes no external network requests.
+- Source imports are SHA-256 checked; raw NASA downloads, SQLite review data and local notes are not committed.
+- The exported evidence is descriptive research material, **not clinical advice or a flight-certified system**.
+- Public Railway hosting is a separate **read-only** configuration; its working HTTPS deployment must be independently verified before being advertised.
+
+[Security model](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Deployment instructions](docs/RAILWAY_DEPLOYMENT.md)
 
 ## Documentation
 
@@ -266,21 +180,14 @@ Code licence: see [LICENSE](LICENSE). NASA data remain subject to their provider
 
 ---
 
-## Release verification — 15 November 2026
+## Verification status
 
-| Check | Actual result |
-|---|---|
-| Production build and strict TypeScript | Passed |
-| Backend regression suite | **61 passed**; one existing Starlette/httpx deprecation warning |
-| Full Chrome browser suite | **25 passed** |
-| NASA source SHA-256 and scientific counts | Both pinned datasets verified |
-| Frontend component tests | Blocked: worker initialization timed out before assertions |
-| Final manual zoom / assistive-technology review | Incomplete; no unconditional accessibility sign-off claimed |
+The latest **reported** repository release checks are dated **15 November 2026**: production build and TypeScript passed, **61 backend tests passed**, **25 Chrome browser tests passed**, and both NASA source hashes were verified. **Frontend component tests were blocked during worker startup**; final manual 200% zoom and assistive-technology verification remain incomplete. These are historical reported results, **not new tests run for this README change**.
 
-Browser checks cover all 140 chart measurements, all 140 Overview values, both baseline definitions, selected versus hovered points, rapid participant/marker changes, source inspection, review editing and audit, HTTP 409 draft preservation, live synchronization, real server-restart persistence, HTML/JSON downloads, network isolation and responsive navigation. The final sidebar cleanup preserves header connectivity, synchronization, credits and source limitations.
+[Full test report and logs](docs/TEST_REPORT.md) · [Implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) · [Release checklist](docs/RELEASE_CHECKLIST.md)
 
-See the existing [implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) and [test report](docs/TEST_REPORT.md) for reproducible commands, evidence and limits. Build and runtime outputs, local dependencies, raw downloads and review databases are deliberately excluded from Git. A fresh checkout must run setup before starting; the running developer preview at :8030 uses an isolated QA database, while the documented demo launcher defaults to :8000.
+## Public demo
 
-## Railway public judge demo
+CytoZoe includes a documented Railway deployment path, but **a working public HTTPS link is not yet verified in the committed release evidence**. Until verified, use the [local quick start](#quick-start) and [judge demo script](docs/DEMO_SCRIPT.md). The public deployment is intentionally read-only; save/edit demonstrations use local mode.
 
-The Docker deployment builds React and installs FastAPI, verifies the pinned NASA downloads, and imports data using the existing scripts. It requires a Railway volume at `/data` and runs a **read-only public entry point**: evidence, replay and exports work; anonymous review writes/imports are blocked. Local startup remains writable and loopback-only. See [Railway deployment and DNS instructions](docs/RAILWAY_DEPLOYMENT.md). Deployment is not claimed until a working HTTPS URL is verified.
+[Railway deployment guide](docs/RAILWAY_DEPLOYMENT.md) · [Submission checklist](docs/SUBMISSION.md)
