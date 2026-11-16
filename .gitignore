@@ -34,3 +34,9 @@ coverage/
 *.gguf
 .DS_Store
 Thumbs.db
+
+# Private planning and AI handoff documents
+_private_docs/
+AGENTS.md
+CLAUDE.md
+*PRD*.md

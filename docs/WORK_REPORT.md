@@ -98,8 +98,8 @@ Logs are in `docs/test-logs/`.
 
 | File | What it is |
 |---|---|
-| `docs/BACKEND_RELEASE_REPORT.md` | Full technical report |
+| Locally archived backend release report | Full technical report |
 | `docs/API_CONTRACT.md` | What the UI team builds on |
 | `docs/RELEASE_CHECKLIST.md` | Steps before submitting |
 | `docs/examples/mission-brief-C001-L-3.json` | Real example of the new brief |
-| `docs/REBUILD_BASELINE.md` | What the audit found before any changes |
+| Locally archived rebuild baseline | What the audit found before any changes |

@@ -1,14 +1,20 @@
-# CytoZoe
+# CytoZoe — Evidence-Driven Space Health Intelligence
 
-**Understand the change. Keep the evidence.**
+**Team CytoZoe (City University Malaysia) · NASA Space Apps Kuala Lumpur 2026**
 
-An **offline-first astronaut health evidence and review workspace**, built for the **NASA Space Apps Challenge 2026**. CytoZoe uses authentic, historical NASA research measurements to help reviewers understand changes, inspect their sources, record follow-ups and export traceable evidence.
+**Challenge:** [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)
 
-[**The challenge**](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/) · [**Explore the interface**](#explore-cytozoe) · [**Run locally**](#quick-start) · [**3-minute judge walkthrough**](docs/DEMO_SCRIPT.md) · [**Source evidence**](docs/DATASETS.md)
+CytoZoe is a local-first astronaut health evidence and review workspace: understand changes in historical NASA measurements, inspect their sources, and record and export traceable follow-ups.
 
-> **Research demonstration — not a medical device.** No diagnosis, medical advice, illness prediction or live vital signs. Health and radiation are separate historical cases, **not person-matched**. The app uses deterministic explanations, **not a runtime AI model**.
+- **Live Application:** [https://cytozoe-production.up.railway.app](https://cytozoe-production.up.railway.app)
+- **30-Second Pitch Video:** [Watch the pitch](https://youtu.be/jRwjF0Jq_pA)
+- **5-Minute Demo & Final Report:** [View the demo and report](https://drive.google.com/file/d/1ekSjXvieL-cMzicCKPdibMAkP8WiNT2T/view?usp=sharing)
 
-## Explore CytoZoe
+> **Research demonstration, not a medical device.** No diagnosis, illness prediction or live vital signs. Health and radiation remain separate historical cases. Explanations are deterministic; no AI model runs in the application.
+
+## Application gallery
+
+### Landing
 
 ![CytoZoe landing page — Orbital Intelligence](docs/screenshots/orbital-landing-1440.png)
 
@@ -24,20 +30,7 @@ An **offline-first astronaut health evidence and review workspace**, built for t
 
 *Screenshots show the real local application with historical NASA data and isolated QA review records. Landing artwork is AI-generated illustration, not NASA photography or scientific data.*
 
-### A complete evidence workflow
-
-**Inspect → compare → explain → record → reopen → audit → export.**
-
-- **Grounded observations:** 140 biomarker measurements from 4 anonymised Inspiration4 participants, with visit-specific source ranges.
-- **Transparent uncertainty:** 4 conflicting duplicate timestamps in a separate NASA ISS radiation record are preserved and excluded from calculations.
-- **Auditable follow-up:** source-linked explanations, persistent review notes, versioned edits and HTML/JSON exports.
-- **Autonomous by design:** core local workflows run without an internet connection after initial setup. The public Railway demo, if deployed, is intentionally **read-only**.
-
-[Explore all features](docs/PRODUCT_FEATURES.md) · [View scientific data and exclusions](docs/DATASETS.md) · [Read verified test evidence](docs/TEST_REPORT.md)
-
----
-
-## Why it matters
+## Problem and solution
 
 On a deep-space mission, the crew may have to review health information when Earth is delayed or unreachable. NASA's exploration-medicine work describes this need for independent access to health data and store-and-forward review ([NASA xEHR, 2023](https://ntrs.nasa.gov/citations/20230003216); [Earth-independent clinical decision support, 2024](https://www.nasa.gov/centers-and-facilities/ames/ames-science/ames-space-biosciences/a-clinical-decision-support-system-for-earth-independent-medical-operations/)).
 
@@ -47,7 +40,7 @@ A spreadsheet of measurements cannot show a reviewer:
 - where the uncertainty is;
 - what follow-up was decided.
 
-CytoZoe closes that review-workflow gap in one complete loop: **inspect → explain → save follow-up → reopen → export**.
+CytoZoe closes that review-workflow gap in one complete loop: **inspect → compare → explain → record → reopen → export**.
 
 | Challenge intent | What CytoZoe does | Honest boundary |
 |---|---|---|
@@ -56,19 +49,41 @@ CytoZoe closes that review-workflow gap in one complete loop: **inspect → expl
 | Act on information | Saves notes and status with an audit trail; exports an HTML/JSON handoff packet | No automatic recommendation or transmission |
 | Support autonomy | Every core operation runs with the internet disconnected after setup | Needs the local server process running |
 
-## Key capabilities
+## Key features and engineering differentiators
 
-- **Health comparisons:** participant baseline, original lab ranges, historical visit trends and source-row evidence.
-- **Radiation quality review:** recorded DosTel1 replay with transparent quarantine of conflicting rows; estimates are **sensor dose only**, never a personal dose.
-- **Review-to-handoff:** versioned notes, audit trail, stale-edit protection, cross-window synchronization and offline HTML/JSON export.
-- **Deterministic evidence:** SHA-256 source verification and fixed explanation templates; no generative AI at runtime.
-- **Full workflow:** five pages, three deterministic engines and locally reproducible source handling.
+- **Five screens:** Landing, Health Overview, Health Trends, Radiation Review, and Review Log & Export.
+- **Three charts:** blood biomarkers by visit, sensor dose rate, and estimated accumulated sensor dose.
+- **Three deterministic engines:** E1 verifies SHA-256 provenance, validates schemas and quarantines conflicts; E2 computes baseline comparisons, deltas and source-range status; E3 integrates accepted sensor intervals.
+- **Historical replay over SSE:** radiation observations stream in source order; timeline replay steps through seven actual blood draws. Both are recorded historical replay, never live telemetry.
+- **Cross-tab SSE synchronization:** saved reviews update other windows; optimistic versioning returns HTTP 409 for stale edits and preserves unsaved drafts.
+- **Traceable handoff:** persistent notes, audit history, fixed source-bound explanations, and self-contained HTML/JSON exports with source hashes and limitations.
+- **Local autonomy:** core workflows work offline after setup while the local server is running. The public Railway demo is read-only; save/edit demonstrations use local mode.
 
 [Complete feature reference](docs/PRODUCT_FEATURES.md) · [API contract](docs/API_CONTRACT.md)
 
----
+## NASA scientific datasets and provenance
 
-## Architecture
+| Case | Source and sample counts | Units |
+|---|---|---|
+| Health | [NASA OSDR OSD-575](https://osdr.nasa.gov/bio/repo/data/studies/OSD-575), Inspiration4 (2021): 4 anonymised participants × 7 visits = 28 samples; 5 biomarkers = 140 measurements | Glucose, creatinine and calcium: mg/dL; sodium and potassium: mmol/L |
+| Environment | [NASA RadLab DosTel1](https://visualization.osdr.nasa.gov/radlab/gui/knowledgebase/DosTel1), ISS Columbus, 1 March 2022: 1,202 source rows; 1,198 unique timestamps; 1,194 accepted rows | Absorbed dose rate: µGy/hour; integrated sensor dose: µGy |
+
+Pinned source SHA-256 hashes:
+
+- **OSD-575** (`LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv`): `5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9`
+- **DosTel1** (`radlab_DosTel1_2022-03-01.csv`): `d3f64e7f483c3ae2f08bb5e6633bae5091e661a988c434205ce6bb78c050f7e1`
+
+Four conflicting duplicate timestamps produce **8 quarantined rows**, preserved for audit and excluded without averaging or selecting a preferred value. The estimate is **296.04 µGy** at the sensor over **23 h 44 min 49 s**, covering **99.04%** of the recorded span: 1,189 included intervals and 4 excluded intervals. It is not personal, organ or effective dose; no Gy-to-Sv conversion is made.
+
+Non-matched candidate datasets GLDS-174 and BIDMC were excluded to preserve scientific validity.
+
+OSD-575 and DosTel1 come from different missions, times and people, so they are **never joined**: the API rejects cross-case linkage with `CROSS_CASE_LINK_REJECTED`. No exposure–health causal claim is made.
+
+[Detailed dataset methods and licensing](docs/DATASETS.md) · [Source manifest](data/manifests/sources.json) · [Provenance](docs/SOURCES.md) · [Data dictionary](docs/DATA_DICTIONARY.md)
+
+## Architecture and technology stack
+
+**React 19 + TypeScript + Vite + Recharts · FastAPI + Pydantic + pandas · SQLite WAL with versioned migrations.** The API serves the built interface from one origin; fonts are bundled locally.
 
 ```mermaid
 flowchart LR
@@ -133,61 +148,57 @@ The real-data backend and E2E tests need `data/raw/` staged (`python scripts/fet
 
 
 
-## NASA data and scientific boundaries
-
-| Case | Authentic source | What the application uses |
-|---|---|---|
-| **Health** | NASA OSDR **OSD-575**, Inspiration4 (2021) | 4 anonymised participants × 7 visits × 5 blood biomarkers = **140 measurements** |
-| **Environment** | NASA OSDR RadLab, ISS **DosTel1** (1 March 2022) | **1,202 rows**, including **8 quarantined conflicting rows** at 4 timestamps; **1,194 accepted** |
-
-The datasets come from different missions, times and people. **They are never joined**, and the application makes no exposure–health causal claim. All raw-source hashes, exact columns, sample calculations, data-quality decisions, licensing notes and exclusions are retained in the [detailed scientific data record](docs/DATASETS.md).
-
-[Source manifest](data/manifests/sources.json) · [Provenance](docs/SOURCES.md) · [Data dictionary](docs/DATA_DICTIONARY.md)
-
----
-
-## Privacy and limitations
-
-- Local startup binds to **127.0.0.1**; after setup the core application makes no external network requests.
-- Source imports are SHA-256 checked; raw NASA downloads, SQLite review data and local notes are not committed.
-- The exported evidence is descriptive research material, **not clinical advice or a flight-certified system**.
-- Public Railway hosting is a separate **read-only** configuration; its working HTTPS deployment must be independently verified before being advertised.
-
-[Security model](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Deployment instructions](docs/RAILWAY_DEPLOYMENT.md)
-
-## Documentation
+## Technical documentation
 
 | Document | Purpose |
 |---|---|
-| [docs/BACKEND_RELEASE_REPORT.md](docs/BACKEND_RELEASE_REPORT.md) | Backend v3 milestones, test results, fixed defects, limits |
-| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | Every endpoint, MissionBriefV1, error codes, provenance |
-| [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) | Fresh setup → journey → offline → submission checks |
-| [docs/REBUILD_BASELINE.md](docs/REBUILD_BASELINE.md) | Audit findings before the backend rebuild |
-| [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | P0/P1 requirement ledger |
-| [docs/TEST_REPORT.md](docs/TEST_REPORT.md) | Commands, results, visual & accessibility findings |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Engines, API, schema, data flow |
-| [docs/SOURCES.md](docs/SOURCES.md) / [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md) | Provenance and fields |
-| [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) | What CytoZoe cannot do |
-| [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) | Three-minute judge demo |
-| [docs/SUBMISSION.md](docs/SUBMISSION.md) | Space Apps submission text and checklist |
-| [docs/SECURITY.md](docs/SECURITY.md) | Threat model and safeguards |
+| [Architecture](docs/ARCHITECTURE.md) | Engines, schema and data flow |
+| [API contract](docs/API_CONTRACT.md) | Endpoints, errors and provenance |
+| [Datasets](docs/DATASETS.md) | Scientific methods, counts and exclusions |
+| [Sources](docs/SOURCES.md) / [Data dictionary](docs/DATA_DICTIONARY.md) | Provenance and fields |
+| [Test report](docs/TEST_REPORT.md) | Historical verification evidence and raw logs |
+| [Security](docs/SECURITY.md) | Threat model and safeguards |
+| [Known limitations](docs/KNOWN_LIMITATIONS.md) | Scientific and verification boundaries |
+| [Release checklist](docs/RELEASE_CHECKLIST.md) | Reproducible release checks |
+| [Railway deployment](docs/RAILWAY_DEPLOYMENT.md) | Read-only public hosting |
 
-## Credits
+## Project team, credits and licensing
 
-Team CytoZoe (NASA Space Apps 2026). Data: NASA OSDR (OSD-575) and NASA OSDR RadLab (DosTel1). Development used AI coding assistants including Claude Code and OpenAI Codex. The premium landing illustrations are AI-generated artwork, not NASA photography or source evidence. The delivered app itself uses no AI model at runtime. Check the 2026 Space Apps AI-disclosure rules before submitting.
+**Team CytoZoe — City University Malaysia (NASA Space Apps Kuala Lumpur 2026)**
 
-Code licence: see [LICENSE](LICENSE). NASA data remain subject to their providers' terms.
+- Mohamed Yuusuf
+- Muhammad Danish bin Shaharin
+- Rashid Riyadh
+- Zineb Afqir
+- Muhyadiin Muhumed Jama
+- Mustafe Abdurazak Omar
 
----
+Scientific data: [NASA OSDR OSD-575](https://osdr.nasa.gov/bio/repo/data/studies/OSD-575) and [NASA OSDR RadLab DosTel1](https://visualization.osdr.nasa.gov/radlab/gui/knowledgebase/DosTel1); NASA data remain subject to their providers' terms.
 
-## Verification status
+Development used AI coding assistants including Claude Code and OpenAI Codex, and the landing illustrations are AI-generated artwork rather than NASA photography or scientific evidence.
 
-The latest **reported** repository release checks are dated **15 November 2026**: production build and TypeScript passed, **61 backend tests passed**, **25 Chrome browser tests passed**, and both NASA source hashes were verified. **Frontend component tests were blocked during worker startup**; final manual 200% zoom and assistive-technology verification remain incomplete. These are historical reported results, **not new tests run for this README change**.
+Code licence: see [LICENSE](LICENSE).
 
-[Full test report and logs](docs/TEST_REPORT.md) · [Implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) · [Release checklist](docs/RELEASE_CHECKLIST.md)
+## Verified release status
 
-## Public demo
+The recorded **15 November 2026** release checks report:
 
-CytoZoe includes a documented Railway deployment path, but **a working public HTTPS link is not yet verified in the committed release evidence**. Until verified, use the [local quick start](#quick-start) and [judge demo script](docs/DEMO_SCRIPT.md). The public deployment is intentionally read-only; save/edit demonstrations use local mode.
+| Check | Verified result |
+|---|---|
+| Production build and strict TypeScript | Passed |
+| Backend regression suite | 61 passed (see historical logs for collection and skips) |
+| Chrome browser E2E suite | 25 passed |
+| NASA SHA-256 source verification | Both pinned datasets passed |
 
-[Railway deployment guide](docs/RAILWAY_DEPLOYMENT.md) · [Submission checklist](docs/SUBMISSION.md)
+These are preserved historical results, not application tests rerun for this documentation-only release. See the [full test report and raw logs](docs/TEST_REPORT.md) and [known limitations](docs/KNOWN_LIMITATIONS.md) for component-worker startup blocks and accessibility scope limits.
+
+## Live Railway demo
+
+**[Open CytoZoe](https://cytozoe-production.up.railway.app)** — HTTPS endpoints verified on **16 November 2026**:
+
+- [`/api/healthz`](https://cytozoe-production.up.railway.app/api/healthz): HTTP 200, `status: alive`.
+- [`/api/readyz`](https://cytozoe-production.up.railway.app/api/readyz): HTTP 200, `ready: true`, `state: READY`; database, migrations, both verified datasets and frontend build all pass.
+
+The public demo is read-only. Use the [local quick start](#quick-start) for persistent review creation, editing and offline export demonstrations.
+
+[Railway deployment guide](docs/RAILWAY_DEPLOYMENT.md)

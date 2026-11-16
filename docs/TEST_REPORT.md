@@ -31,7 +31,7 @@ Evidence: [browser](test-logs/premium-three-browser.txt), [backend + TypeScript 
 
 ## Historical test records
 
-> **Historical (backend v3, 14 Nov 2026):** 56 backend · 4 frontend unit · 12 E2E · 13 launcher checks, all passing. Details, the B01–B24 matrix and fixed defects: [BACKEND_RELEASE_REPORT.md](BACKEND_RELEASE_REPORT.md). The sections below are the earlier v1/v2 record.
+> **Historical (backend v3, 14 Nov 2026):** 56 backend · 4 frontend unit · 12 E2E · 13 launcher checks, all passing. Details, the B01–B24 matrix and fixed defects: the locally archived backend release report. The sections below are the earlier v1/v2 record.
 
 **Run date:** 14 Nov 2026 · **Machine:** Windows 11 Home 10.0.26300 · Python 3.12.10 · Node 26.13.0 · Microsoft Edge (Playwright channel `msedge`) · Raw logs: [docs/test-logs/](test-logs/)
 
@@ -123,7 +123,7 @@ API responses took 5–16 ms for `/api/health`, `/api/health/trend`, `/api/parti
 
 ## Offline verification: what was and wasn't done
 - **Done:** Playwright aborted every request whose host was not 127.0.0.1/localhost. The full journey (all 4 routes, inspect, explain, save, reload, export) passed, with **0** external requests attempted.
-- **Not done:** physically disabling Wi-Fi/Ethernet on the demo laptop. **The team must do this before the demo** (see `DEMO_SCRIPT.md`).
+- **Not done:** physically disabling Wi-Fi/Ethernet on the demo laptop. **The team must do this before the demo** (see the [release checklist](RELEASE_CHECKLIST.md)).
 
 
 ## Final integration pass — 15 November 2026

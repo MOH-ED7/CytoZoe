@@ -32,7 +32,7 @@ The initial run exposed a stale tooltip position on resize, a rapid URL selectio
 
 Landing, Radiation Review and Review Log source files/styles are unchanged. Shared workspace CSS adds only selectors scoped to Overview's empty state. Local build is ready for demonstration of the tested core workflows; unconditional full-verification release sign-off remains pending component-runner and final manual zoom/assistive-technology checks.
 
-Screenshots: [desktop Trends](screenshots/release-trends-1440.png), [mobile Trends](screenshots/release-trends-390.png), [compact Overview empty state](screenshots/release-overview-empty-1440.png). Records shown are real isolated QA records, not fabricated application data.
+The historical run referenced desktop/mobile Trends and compact Overview empty-state screenshots that are not included in this repository snapshot. Available application captures are in the [README gallery](../README.md#application-gallery); they show real isolated QA records, not fabricated application data.
 
 Evidence: [browser](test-logs/release-stabilization-browser.txt), [build](test-logs/release-stabilization-build.txt), [component attempt](test-logs/release-stabilization-components.txt), [component retry](test-logs/release-stabilization-components-retry.txt), [source verification](test-logs/release-stabilization-sources.txt).
 
@@ -119,6 +119,6 @@ Troubleshooting: free ports 8000/5173 by stopping their owning application; neve
 1. Turn Wi-Fi off on the demonstration laptop with server running; inspect, save, refresh, reopen and export both formats. Browser-level network isolation already verifies the same dependency boundary but is not physical proof.
 2. Review all four pages and drawer at real 200% browser zoom and with VoiceOver. Automated axe is not equivalent to manual assistive-technology testing. Automated 1280×800 no-overflow checks are included in the final-release test.
 3. Open repository and NASA citations logged out; confirm public accessibility. No portal policy or competition eligibility verification was performed in this implementation pass.
-4. Record the real 2–3 minute route in DEMO_SCRIPT.md, add video URL in SUBMISSION.md, review AI-development disclosure, and submit through the official portal as a team.
+4. Record the real 2–3 minute core journey, review AI-development disclosure, and submit the video URL through the official portal as a team.
 
 Reproducible final logs: [tests](test-logs/final-tests.txt), [browser](test-logs/final-browser.txt), [launcher](test-logs/final-launcher.txt), [build](test-logs/final-build.txt), [source verification](test-logs/final-data.txt). Final browser run follows the evidence-first drawer change; all 17 tests pass.
