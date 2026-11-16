@@ -20,4 +20,4 @@ Both hashes matched the PRD's previously inspected snapshots byte-for-byte on 14
 These references establish the operational need. They do not show that NASA lacks such tools, and they do not endorse CytoZoe.
 
 ## Not used
-GLDS-174 (deferred future molecular context) and BIDMC (explicitly excluded). See the README section "Datasets" for the reasons.
+GLDS-174 (deferred future molecular context) and BIDMC (explicitly excluded). See [DATASETS.md](DATASETS.md) for the reasons and complete scientific dataset documentation.
